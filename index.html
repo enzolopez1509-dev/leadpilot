@@ -37,7 +37,7 @@ window.addEventListener('unhandledrejection', e => { const m=document.getElement
 </script>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.57.0';
-const db=createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzd');
+const db=createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ');
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let user=null,agency=null,leads=[];
 function screen(x){$('authPanel').classList.toggle('hidden',x!=='auth');$('agencyPanel').classList.toggle('hidden',x!=='agency');$('crmApp').classList.toggle('hidden',x!=='crm');$('logoutBtn').classList.toggle('hidden',!user);$('addBtn').classList.toggle('hidden',x!=='crm');$('exportBtn').classList.toggle('hidden',x!=='crm')}
