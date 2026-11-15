@@ -102,11 +102,37 @@ td small{font-size:11px;color:#7c878b}
  .filter-panel{display:grid;grid-template-columns:1fr;gap:8px}
  .filter-panel select{width:100%;max-width:none}
 }
+
+/* En-tête professionnel et compact */
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 26px;background:linear-gradient(115deg,#142b39 0%,#203e4d 100%);border:1px solid #294858;border-radius:18px;box-shadow:0 12px 30px #172d3b18;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:15px;min-width:0}
+.logo{width:54px;height:54px;flex:0 0 54px;border-radius:15px;background:#c4a36b;color:#172d3b;font-size:20px}
+.brand h1{font-family:Georgia,"Times New Roman",serif;font-size:29px;line-height:1.1;letter-spacing:.01em}
+.brand p{font-size:12px;margin-top:6px;letter-spacing:.055em}
+.top .actions{margin-left:auto;flex:0 0 auto}
+.top .actions .primary{padding:13px 19px;background:#c4a36b;color:#172d3b;font-size:14px;font-weight:700;box-shadow:0 5px 14px #080f151f}
+.top .actions .primary:hover{background:#d2b77f}
+@media(max-width:700px){
+ .wrap{padding:12px}
+ .top{flex-direction:row;align-items:center;gap:10px;padding:15px 14px;border-radius:15px;margin-bottom:17px}
+ .brand{gap:10px}
+ .logo{width:43px;height:43px;flex-basis:43px;border-radius:12px;font-size:17px}
+ .brand h1{font-size:23px}
+ .brand p{font-size:10px;letter-spacing:.025em;line-height:1.35}
+ .top .actions{margin:0}
+ .top .actions .primary{padding:11px 12px;font-size:12px;white-space:nowrap}
+}
+@media(max-width:390px){
+ .top{padding:13px 10px}
+ .brand h1{font-size:21px}
+ .brand p{max-width:145px}
+ .top .actions .primary{padding:10px;font-size:11px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">LP</div><div><h1>LeadPilot</h1><p>Votre suivi prospects immobilier · Cannes</p></div></div><div class="actions"><button class="secondary" id="exportBtn">Exporter CSV</button><button class="primary" id="addBtn">＋ Ajouter un prospect</button></div></header>
+<header class="top"><div class="brand"><div class="logo">LP</div><div><h1>LeadPilot</h1><p>Votre suivi prospects immobilier · Cannes</p></div></div><div class="actions"><button class="primary" id="addBtn">＋ Nouveau prospect</button></div></header>
 <section class="panel" id="authPanel" style="max-width:520px;margin:30px auto">
 <h2 style="margin-top:0">Bienvenue sur LeadPilot</h2>
 <p style="color:var(--muted);margin-top:-6px">Connectez-vous ou créez votre espace professionnel.</p>
@@ -167,7 +193,7 @@ $('addBtn').onclick=()=>openForm();$('cancelBtn').onclick=()=>$('modal').classLi
 $('photoFile').onchange=()=>{const file=$('photoFile').files[0];if(!file)return;if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){alert('Choisis une image JPG, PNG ou WebP de 5 Mo maximum.');$('photoFile').value='';return}const url=URL.createObjectURL(file);$('photoPreview').src=url;$('photoPreview').classList.remove('hidden');$('photoHelp').textContent='Nouvelle photo prête à être enregistrée.'};
 $('leadForm').onsubmit=async e=>{e.preventDefault();const id=$('leadId').value,p={agency_id:agency,created_by:user.id,assigned_to:user.id,full_name:$('name').value.trim(),phone:$('phone').value.trim()||null,email:$('email').value.trim()||null,project:$('project').value,property:$('property').value||null,budget:$('budget').value?Number($('budget').value):null,status:$('status').value,follow_up_at:$('date').value||null,notes:$('notes').value.trim()||null,visit_address:$('visitAddress').value.trim()||null,visit_date:$('visitDate').value||null,visit_time:$('visitTime').value||null,updated_at:new Date().toISOString()};let leadId=id,oldPhoto=leads.find(x=>x.id===id)?.photoPath||null;let r;if(id){r=await db.from('leads').update(p).eq('id',id).eq('agency_id',agency);if(r.error){alert(r.error.message);return}}else{r=await db.from('leads').insert(p).select('id').single();if(r.error){alert(r.error.message);return}leadId=r.data.id}const file=$('photoFile').files[0];if(file){const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg',path=agency+'/'+leadId+'/'+crypto.randomUUID()+'.'+ext;const up=await db.storage.from('lead-property-photos').upload(path,file,{contentType:file.type,upsert:false});if(up.error){alert('Le prospect est enregistré, mais la photo n’a pas pu être envoyée : '+up.error.message);$('modal').classList.remove('open');await load();return}const saved=await db.from('leads').update({photo_path:path,updated_at:new Date().toISOString()}).eq('id',leadId).eq('agency_id',agency);if(saved.error){alert('La photo est envoyée, mais son association au prospect a échoué : '+saved.error.message);return}if(oldPhoto)await db.storage.from('lead-property-photos').remove([oldPhoto])}$('modal').classList.remove('open');await load()};
 $('leadCards').onclick=async e=>{const id=e.target.dataset.edit,del=e.target.dataset.del;if(id){const x=leads.find(a=>a.id===id);if(x)openForm(x)}if(del&&confirm('Supprimer ce prospect ?')){const {error}=await db.from('leads').delete().eq('id',del).eq('agency_id',agency);if(error)alert(error.message);else await load()}};
-$('exportBtn').onclick=()=>{const c=['name','phone','email','project','property','budget','status','date','notes'];const csv=[c.join(';'),...leads.map(x=>c.map(k=>'"'+String(x[k]||'').replace(/"/g,'""')+'"').join(';'))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='leadpilot.csv';a.click();URL.revokeObjectURL(a.href)};
+
 const {data}=await db.auth.getSession();user=data.session?.user||null;if(user)await agencies();else screen('auth');db.auth.onAuthStateChange((_e,session)=>{user=session?.user||null;setTimeout(()=>{if(user)agencies();else screen('auth')},0)});
 </script>
 </body></html>
