@@ -348,9 +348,9 @@ $('cancelProperty').onclick=resetPropertyForm;
 $('propertyForm').onsubmit=async e=>{
  e.preventDefault();const id=$('propertyId').value;
  const p={agency_id:agency,created_by:user.id,title:$('propertyTitle').value.trim(),property_type:$('propertyType').value||null,sector:$('propertySector').value.trim()||null,address:$('propertyAddress').value.trim()||null,price:$('propertyPrice').value?Number($('propertyPrice').value):null,bedrooms:$('propertyBedrooms').value?Number($('propertyBedrooms').value):null,surface:$('propertySurface').value?Number($('propertySurface').value):null,has_garden:$('propertyGarden').checked,has_terrace:$('propertyTerrace').checked,has_parking:$('propertyParking').checked,has_pool:$('propertyPool').checked,notes:$('propertyNotes').value.trim()||null,status:$('propertyStatus').value,updated_at:new Date().toISOString()};
- const result=id?await db.from('properties').update(p).eq('id',id).eq('agency_id',agency):await db.from('properties').insert(p);
+ const result=id?await db.from('properties').update(p).eq('id',id).eq('agency_id',agency):await db.from('properties').insert(p).select('id').single();
  if(result.error){alert('Impossible d’enregistrer le bien : '+result.error.message);return}
- resetPropertyForm();await load();
+ const savedId=id||result.data?.id;resetPropertyForm();await load();const savedProperty=properties.find(x=>x.id===savedId);if(savedProperty)showMatching(savedProperty);
 };
 $('propertiesList').onclick=e=>{
  const match=e.target.dataset.propertyMatch,edit=e.target.dataset.propertyEdit;
