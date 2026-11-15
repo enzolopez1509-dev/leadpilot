@@ -191,15 +191,11 @@ window.addEventListener('unhandledrejection', e => { const m=document.getElement
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.117.1';
 const db=createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let user=null,agency=null,leads=[],activeUserId=null,authInitialized=false;
+let user=null,agency=null,leads=[],activeUserId=null;
 db.auth.onAuthStateChange((event,session)=>{
   const nextUser=session?.user||null;
   const nextId=nextUser?.id||null;
-  if(event==='INITIAL_SESSION'){
-    authInitialized=true;user=nextUser;activeUserId=nextId;
-    setTimeout(()=>{if(user)agencies();else screen('auth')},0);
-    return;
-  }
+  if(event==='INITIAL_SESSION') return;
   if(event==='SIGNED_OUT'){
     user=null;activeUserId=null;agency=null;leads=[];
     screen('auth');
@@ -212,6 +208,20 @@ db.auth.onAuthStateChange((event,session)=>{
     user=nextUser;
   }
 });
+async function restoreAuth(){
+  try{
+    const {data,error}=await db.auth.getSession();
+    if(error) throw error;
+    user=data.session?.user||null;
+    activeUserId=user?.id||null;
+    if(user) await agencies();
+    else screen('auth');
+  }catch(e){
+    $('authMsg').textContent='Impossible de restaurer la connexion : '+(e.message||String(e));
+    screen('auth');
+  }
+}
+restoreAuth();
 function screen(x){$('authPanel').classList.toggle('hidden',x!=='auth');$('agencyPanel').classList.toggle('hidden',x!=='agency');$('crmApp').classList.toggle('hidden',x!=='crm');$('logoutBtn').classList.toggle('hidden',!user);$('addBtn').classList.toggle('hidden',x!=='crm')}
 async function agencies(){const {data,error}=await db.from('agency_members').select('agency_id,role,agencies(name)').eq('user_id',user.id);if(error){$('agencyMsg').textContent=error.message;screen('agency');return}const memberships=data||[];$('agencySelect').innerHTML=memberships.map(x=>'<option value="'+x.agency_id+'">'+esc(x.agencies?.name||'Agence')+' — '+x.role+'</option>').join('');if(memberships.length===1){agency=memberships[0].agency_id;screen('crm');await load();return}$('agencyMsg').textContent=memberships.length?'Choisissez votre agence.':'Créez votre première agence.';screen('agency')}
 async function load(){const {data,error}=await db.from('leads').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(error){alert(error.message);return}leads=(data||[]).map(x=>({id:x.id,name:x.full_name,phone:x.phone,email:x.email,project:x.project,budget:x.budget,property:x.property||'',status:x.status,date:x.follow_up_at?.slice(0,10)||'',notes:x.notes||'',photoPath:x.photo_path||'',photoUrl:null,visitAddress:x.visit_address||'',visitDate:x.visit_date||'',visitTime:x.visit_time?.slice(0,5)||'',created:new Date(x.created_at).getTime()}));await Promise.all(leads.map(async x=>{if(x.photoPath){const {data}=await db.storage.from('lead-property-photos').createSignedUrl(x.photoPath,3600);x.photoUrl=data?.signedUrl||null}}));render()}
@@ -230,6 +240,6 @@ $('photoFile').onchange=()=>{const file=$('photoFile').files[0];if(!file)return;
 $('leadForm').onsubmit=async e=>{e.preventDefault();const id=$('leadId').value,p={agency_id:agency,created_by:user.id,assigned_to:user.id,full_name:$('name').value.trim(),phone:$('phone').value.trim()||null,email:$('email').value.trim()||null,project:$('project').value,property:$('property').value||null,budget:$('budget').value?Number($('budget').value):null,status:$('status').value,follow_up_at:$('date').value||null,notes:$('notes').value.trim()||null,visit_address:$('visitAddress').value.trim()||null,visit_date:$('visitDate').value||null,visit_time:$('visitTime').value||null,updated_at:new Date().toISOString()};let leadId=id,oldPhoto=leads.find(x=>x.id===id)?.photoPath||null;let r;if(id){r=await db.from('leads').update(p).eq('id',id).eq('agency_id',agency);if(r.error){alert(r.error.message);return}}else{r=await db.from('leads').insert(p).select('id').single();if(r.error){alert(r.error.message);return}leadId=r.data.id}const file=$('photoFile').files[0];if(file){const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg',path=agency+'/'+leadId+'/'+crypto.randomUUID()+'.'+ext;const up=await db.storage.from('lead-property-photos').upload(path,file,{contentType:file.type,upsert:false});if(up.error){alert('Le prospect est enregistré, mais la photo n’a pas pu être envoyée : '+up.error.message);$('modal').classList.remove('open');await load();return}const saved=await db.from('leads').update({photo_path:path,updated_at:new Date().toISOString()}).eq('id',leadId).eq('agency_id',agency);if(saved.error){alert('La photo est envoyée, mais son association au prospect a échoué : '+saved.error.message);return}if(oldPhoto)await db.storage.from('lead-property-photos').remove([oldPhoto])}$('modal').classList.remove('open');await load()};
 $('leadCards').onclick=async e=>{const id=e.target.dataset.edit,del=e.target.dataset.del;if(id){const x=leads.find(a=>a.id===id);if(x)openForm(x)}if(del&&confirm('Supprimer ce prospect ?')){const {error}=await db.from('leads').delete().eq('id',del).eq('agency_id',agency);if(error)alert(error.message);else await load()}};
 
-// La restauration de session est pilotée dès le démarrage par INITIAL_SESSION ci-dessus.
+// La session est restaurée explicitement avec getSession() au démarrage.
 </script>
 </body></html>
