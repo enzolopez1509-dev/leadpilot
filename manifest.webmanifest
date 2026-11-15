@@ -1,0 +1,20 @@
+{
+  "name": "LeadPilot — Suivi prospects",
+  "short_name": "LeadPilot",
+  "description": "Suivi des prospects et agenda des visites immobilières",
+  "lang": "fr-FR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f1ec",
+  "theme_color": "#172d3b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
