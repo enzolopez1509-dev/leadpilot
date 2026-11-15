@@ -324,7 +324,7 @@ function runMatching(){
   if(x.property&&v.property&&x.property.toLowerCase()!==v.property)return false;
   if(x.searchSector){if(!v.sector)return false;const terms=x.searchSector.toLowerCase().split(/[,;/]+/).map(s=>s.trim()).filter(Boolean);if(!terms.some(t=>v.sector.includes(t)||t.includes(v.sector)))return false}
   if(v.price!==null&&((x.budgetMin&&v.price<Number(x.budgetMin))||(x.budgetMax&&v.price>Number(x.budgetMax))))return false;
-  if(x.budgetMin&&v.price===null)return false;
+  if((x.budgetMin||x.budgetMax)&&v.price===null)return false;
   if(x.bedroomsMin&&(v.bedrooms===null||v.bedrooms<Number(x.bedroomsMin)))return false;
   if(x.surfaceMin&&(v.surface===null||v.surface<Number(x.surfaceMin)))return false;
   if(x.hasGarden&&!v.garden)return false;if(x.hasTerrace&&!v.terrace)return false;if(x.hasParking&&!v.parking)return false;if(x.hasPool&&!v.pool)return false;
