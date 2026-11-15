@@ -7,7 +7,58 @@
 :root{--bg:#f4f6fa;--panel:#fff;--ink:#172033;--muted:#68738a;--line:#e6eaf1;--blue:#365cf5;--green:#138a62;--amber:#b7791f;--red:#c24141}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:650}.primary{background:var(--blue);color:white}.secondary{background:#edf1ff;color:#2948c8}.danger{background:#fff0f0;color:var(--red)}.wrap{max-width:1120px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:#172033;color:white;display:grid;place-items:center;font-weight:800;font-size:19px}.brand h1{font-size:21px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.stat strong.overdue-count{color:var(--red)}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px}.stat{padding:16px}.stat span{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:27px;margin-top:5px}.panel{padding:16px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:190px}.field{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:white;color:var(--ink)}.toolbar select{max-width:190px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:700px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}td small{display:block;color:var(--muted);margin-top:3px}.pill{display:inline-block;border-radius:30px;padding:5px 9px;font-size:12px;font-weight:700;background:#eef1f6;color:#475166}.pill.Nouveau{background:#edf1ff;color:#365cf5}.pill.Contacté{background:#e7f5ff;color:#17658e}.pill.Visite{background:#fff4df;color:#95610d}.pill.Gagné{background:#e6f7ef;color:#14754f}.pill.Perdue{background:#fff0f0;color:#b43d3d}.empty{text-align:center;padding:36px;color:var(--muted)}.property-photo{width:68px;height:54px;object-fit:cover;border-radius:8px;display:block}.photo-preview{max-width:100%;max-height:180px;border-radius:10px;display:block;margin-top:8px}.photo-link{display:inline-block}.modal{position:fixed;inset:0;background:#11182780;display:none;align-items:center;justify-content:center;padding:16px;z-index:5}.modal.open{display:flex}.dialog{background:white;border-radius:18px;padding:20px;width:min(540px,100%);max-height:90vh;overflow:auto}.dialog h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.formgrid label{font-size:13px;color:var(--muted);display:grid;gap:6px}.formgrid .full{grid-column:1/-1}.formfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.note{color:var(--muted);font-size:12px;margin-top:14px}.rowactions{display:flex;gap:6px}.rowactions button{padding:7px 9px;font-size:12px}.due{color:var(--red);font-weight:700}.today{color:var(--amber);font-weight:700}.hidden{display:none!important}
 @media(max-width:700px){.wrap{padding:15px}.top{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}.stat strong{font-size:23px}.formgrid{grid-template-columns:1fr}.formgrid .full{grid-column:auto}.actions button{flex:1}}
-.stat.clickable{cursor:pointer;transition:border-color .15s,transform .15s}.stat.clickable:hover{border-color:var(--blue);transform:translateY(-1px)}.stat.clickable:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.stat small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.stat.clickable{cursor:pointer;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:rgba(54,92,245,.18)}.stat.clickable:active{background:#f4f6ff}</style>
+.stat.clickable{cursor:pointer;transition:border-color .15s,transform .15s}.stat.clickable:hover{border-color:var(--blue);transform:translateY(-1px)}.stat.clickable:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.stat small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.stat.clickable{cursor:pointer;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:rgba(54,92,245,.18)}.stat.clickable:active{background:#f4f6ff}
+/* LeadPilot — identité visuelle premium */
+:root{--bg:#f3f1ec;--panel:#fffefa;--ink:#182735;--muted:#78838b;--line:#e6e1d7;--blue:#17384a;--green:#28745b;--amber:#a97835;--red:#b94a43}
+body{background:radial-gradient(ellipse at 12% 0%,#e8e4da 0,transparent 38%),var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.005em}
+.wrap{max-width:1280px;padding:30px 28px}
+.top{padding:20px 24px;background:#172d3b;color:#fff;border-radius:20px;margin-bottom:26px;box-shadow:0 12px 32px #172d3b18}
+.brand{gap:14px}.logo{background:#c4a36b;color:#172d3b;border-radius:12px;width:46px;height:46px;font-size:18px;letter-spacing:-.05em}
+.brand h1{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:600;letter-spacing:.01em}
+.brand p{color:#c2cbd0;font-size:12px;letter-spacing:.04em}
+.actions{gap:10px}
+button{border-radius:9px;padding:11px 16px;transition:background .18s,transform .18s,box-shadow .18s}
+button:hover{transform:translateY(-1px)}
+.primary{background:#b99359;color:#172d3b;box-shadow:0 4px 12px #b993592b}
+.primary:hover{background:#c9a873}
+.secondary{background:#e9e6de;color:#273d4a}
+.danger{background:#f9eae7;color:#a33d37}
+.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:0 5px 18px #24374608}
+.stats{gap:14px;margin-bottom:20px}
+.stat{padding:19px 18px;position:relative;overflow:hidden}
+.stat:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#c4a36b}
+.stat span{font-size:12px;font-weight:650;letter-spacing:.045em;text-transform:uppercase;color:#687781}
+.stat strong{font-family:Georgia,"Times New Roman",serif;font-size:32px;color:#1b3544;margin-top:8px}
+.stat small{font-size:11px;color:#929a9d}
+.stat.clickable:hover{border-color:#b99359;box-shadow:0 8px 22px #24374612}
+.stat.clickable:active{background:#f7f2e8}
+.panel{padding:21px}
+.toolbar{gap:11px;margin-bottom:18px}
+.field{border:1px solid #ddd8ce;border-radius:9px;padding:12px 13px;background:#fffefa;color:#20323d;outline:none;transition:border-color .15s,box-shadow .15s}
+.field:focus{border-color:#b99359;box-shadow:0 0 0 3px #b993591c}
+table{min-width:850px}
+th{font-size:10px;letter-spacing:.09em;color:#7c8588;padding:13px 12px;border-bottom:1px solid #dcd6ca}
+td{padding:15px 12px;border-bottom:1px solid #eeeae2;font-size:13px}
+tbody tr:hover{background:#faf7f0}
+td b{color:#1c3442}
+td small{font-size:11px;color:#7c878b}
+.pill{border-radius:6px;padding:5px 9px;letter-spacing:.015em}
+.pill.Visite{background:#f4ead7;color:#89602b}
+.pill.Gagné{background:#e4eee7;color:#286348}
+.pill.Nouveau{background:#e8edf0;color:#355568}
+.pill.Contacté{background:#e5eef1;color:#386578}
+.pill.Perdue{background:#f7e7e4;color:#a13f38}
+.property-photo{width:76px;height:60px;border-radius:7px}
+.modal{background:#122533a8;backdrop-filter:blur(5px)}
+.dialog{background:#fffefa;border:1px solid #e7e0d4;border-radius:16px;box-shadow:0 24px 80px #10212d40;padding:24px}
+.dialog h2,#categoryTitle{font-family:Georgia,"Times New Roman",serif;color:#1c3544}
+.note{color:#859095}
+#authPanel,#agencyPanel{box-shadow:0 18px 55px #24374612!important;border-color:#e3ddd1}
+#authPanel h2,#agencyPanel h2{font-family:Georgia,"Times New Roman",serif;color:#1c3544;font-size:27px}
+#categoryPage{border-left:3px solid #b99359}
+@media(max-width:700px){.wrap{padding:13px}.top{padding:17px;border-radius:14px}.brand h1{font-size:23px}.stats{gap:9px}.stat{padding:14px 12px}.stat strong{font-size:27px}.panel{padding:14px}.actions button{flex:1}}
+
+</style>
 </head>
 <body>
 <div class="wrap">
