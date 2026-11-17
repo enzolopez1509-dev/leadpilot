@@ -314,7 +314,7 @@ async function logActivity(leadId,type,description){
   const stamp=new Date().toISOString();
   const {error:updateError}=await db.from('leads').update({updated_at:stamp}).eq('id',leadId).eq('agency_id',agency);
   if(updateError)console.warn('Date de dernière activité non actualisée :',updateError.message);
-  else{const lead=leads.find(x=>x.id===leadId);if(lead)lead.lastUpdated=new Date(stamp).getTime()}
+  else{const lead=leads.find(x=>x.id===leadId);if(lead)lead.lastUpdated=new Date(stamp).getTime();render()}
  }
  return true;
 }
