@@ -533,9 +533,14 @@ window.__visibienAuthReady=window.__supabaseReady.then(lib=>{
       else if(data.session)msg.textContent='Compte créé ! Vous pouvez maintenant créer votre agence.';
       else{msg.textContent='Compte créé ! Consultez votre e-mail pour confirmer votre adresse.';document.getElementById('resendConfirm')?.classList.remove('hidden');}
     }else{
-      const {error}=await authDb.auth.signInWithPassword({email,password});
+      const {data,error}=await authDb.auth.signInWithPassword({email,password});
       if(error)msg.textContent='Connexion impossible : '+error.message;
-      else{msg.textContent='Connexion réussie. Rechargez la page pour ouvrir votre espace.';}
+      else{
+        /* Attend la persistance de la session, puis recharge : l'application principale restaure alors cette session avec son propre client Supabase. */
+        await authDb.auth.getSession();
+        msg.textContent='Connexion réussie. Ouverture de votre espace…';
+        setTimeout(()=>window.location.reload(),700);
+      }
     }
   };
   return true;
