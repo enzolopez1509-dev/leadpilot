@@ -1,4 +1,4 @@
-const CACHE_NAME = 'visibien-shell-v39';
+const CACHE_NAME = 'visibien-shell-v40';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
