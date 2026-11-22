@@ -76,8 +76,8 @@ Deno.serve(async (req: Request) => {
 
     const name = lead.full_name || "un prospect";
     const leadUrl = "https://enzolopez1509-dev.github.io/leadpilot/?lead=" + encodeURIComponent(lead.id);
-    const subject = "LeadPilot · Relance à effectuer : " + name;
-    const html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#203442"><h2>Relance à effectuer</h2><p>Bonjour,</p><p>Une relance est arrivée à échéance pour <strong>' + escapeHtml(name) + '</strong>.</p><p>Statut : ' + escapeHtml(lead.status || "Nouveau") + '</p><p><a href="' + leadUrl + '" style="display:inline-block;background:#203f50;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none">Ouvrir la fiche dans LeadPilot</a></p><p style="font-size:12px;color:#77838b">Vous recevez cet e-mail car les rappels par e-mail sont activés dans LeadPilot.</p></div>';
+    const subject = "VisiBien · Relance à effectuer : " + name;
+    const html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#203442"><h2>Relance à effectuer</h2><p>Bonjour,</p><p>Une relance est arrivée à échéance pour <strong>' + escapeHtml(name) + '</strong>.</p><p>Statut : ' + escapeHtml(lead.status || "Nouveau") + '</p><p><a href="' + leadUrl + '" style="display:inline-block;background:#203f50;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none">Ouvrir la fiche dans VisiBien</a></p><p style="font-size:12px;color:#77838b">Vous recevez cet e-mail car les rappels par e-mail sont activés dans VisiBien.</p></div>';
     try {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
