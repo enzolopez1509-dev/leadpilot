@@ -454,7 +454,19 @@ window.__visibienModuleStarted=false;
 window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleStarted){const m=document.getElementById('authMsg');if(m)m.textContent='Le module de connexion ne s’est pas chargé. Vérifiez votre connexion internet puis rechargez la page.'}},2500));
 </script>
 <script type="module">
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+let createClient;
+try {
+  ({createClient}=await import('https://esm.sh/@supabase/supabase-js@2'));
+} catch (firstError) {
+  try {
+    ({createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'));
+  } catch (secondError) {
+    const message='Impossible de charger le service de connexion. Détail : '+(secondError?.message||firstError?.message||'bibliothèque inaccessible');
+    const status=document.getElementById('authMsg');
+    if(status) status.textContent=message;
+    throw new Error(message);
+  }
+}
 window.__visibienModuleStarted=true;
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker indisponible',err)));
