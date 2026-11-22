@@ -484,25 +484,27 @@ window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleSt
     if(!email||!password||!msg)return;
     if(!email.value.trim()||!email.checkValidity()){msg.textContent='Saisissez une adresse e-mail valide.';email.focus();return;}
     if(!password.value){msg.textContent='Saisissez votre mot de passe.';password.focus();return;}
-    if(typeof window.__visibienAuthAction!=='function'){
-      msg.textContent='Le service de connexion ne s’est pas initialisé. Rechargez la page ; si le problème persiste, envoyez-moi une capture de cet écran.';
-      return;
-    }
     button.disabled=true;
-    button.textContent='Connexion en cours…';
-    msg.textContent='Connexion en cours…';
-    try{await window.__visibienAuthAction(email.value.trim(),password.value);}
-    catch(error){msg.textContent='Erreur de connexion : '+(error&&error.message?error.message:String(error));}
+    button.textContent='Initialisation…';
+    msg.textContent='Connexion au service en cours…';
+    try{
+      if(window.__visibienAuthReady) await window.__visibienAuthReady;
+      if(typeof window.__visibienAuthAction!=='function') throw new Error('Le service Supabase ne fournit pas la fonction de connexion.');
+      button.textContent='Connexion en cours…';
+      msg.textContent='Connexion en cours…';
+      await window.__visibienAuthAction(email.value.trim(),password.value);
+    }catch(error){msg.textContent='Erreur de connexion : '+(error&&error.message?error.message:String(error));}
     finally{button.disabled=false;button.textContent=window.__visibienAuthMode==='signup'?'Créer mon compte':'Se connecter';}
   },true);
 })();
 </script>
 <script>
-/* Charge Supabase en script classique : plus compatible avec les navigateurs intégrés iOS que les imports ESM CDN. */
+/* Initialisation de l'authentification hors module ES : le bouton fonctionne même si le reste de l'application rencontre une erreur JS. */
+window.__visibienAuthMode='login';
 window.__supabaseReady=new Promise(resolve=>{
   const sources=[
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
-    'https://unpkg.com/@supabase/supabase-js@2'
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
   ];
   let index=0;
   const loadNext=()=>{
@@ -512,12 +514,35 @@ window.__supabaseReady=new Promise(resolve=>{
     script.src=sources[index++];
     script.async=true;
     let settled=false;
-    const timer=setTimeout(()=>{if(!settled){settled=true;script.remove();loadNext();}},9000);
+    const timer=setTimeout(()=>{if(!settled){settled=true;script.remove();loadNext();}},12000);
     script.onload=()=>{if(settled)return;settled=true;clearTimeout(timer);if(window.supabase&&typeof window.supabase.createClient==='function')resolve(window.supabase);else loadNext();};
     script.onerror=()=>{if(settled)return;settled=true;clearTimeout(timer);loadNext();};
     document.head.appendChild(script);
   };
   loadNext();
+});
+window.__visibienAuthReady=window.__supabaseReady.then(lib=>{
+  if(!lib) throw new Error('Bibliothèque Supabase inaccessible depuis ce navigateur.');
+  const authDb=lib.createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
+  window.__visibienAuthAction=async(email,password)=>{
+    const msg=document.getElementById('authMsg');
+    if(window.__visibienAuthMode==='signup'){
+      if(password.length<8){msg.textContent='Le mot de passe doit contenir au moins 8 caractères.';return;}
+      const {data,error}=await authDb.auth.signUp({email,password,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});
+      if(error)msg.textContent='Création impossible : '+error.message;
+      else if(data.session)msg.textContent='Compte créé ! Vous pouvez maintenant créer votre agence.';
+      else{msg.textContent='Compte créé ! Consultez votre e-mail pour confirmer votre adresse.';document.getElementById('resendConfirm')?.classList.remove('hidden');}
+    }else{
+      const {error}=await authDb.auth.signInWithPassword({email,password});
+      if(error)msg.textContent='Connexion impossible : '+error.message;
+      else{msg.textContent='Connexion réussie. Rechargez la page pour ouvrir votre espace.';}
+    }
+  };
+  return true;
+});
+window.__visibienAuthReady.catch(error=>{
+  const msg=document.getElementById('authMsg');
+  if(msg)msg.textContent='Initialisation impossible : '+error.message;
 });
 </script>
 <script type="module">
