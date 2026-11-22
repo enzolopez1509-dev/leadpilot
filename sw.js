@@ -22,7 +22,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch (_) {}
-  const title = data.title || 'LeadPilot';
+  const title = data.title || 'VisiBien';
   const options = {
     body: data.body || 'Vous avez un rappel à consulter.',
     icon: './icon.svg',
