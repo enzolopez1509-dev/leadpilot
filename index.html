@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LeadPilot, le CRM immobilier pour suivre vos prospects, gérer vos biens, organiser vos visites et piloter les relances de votre agence.">
 <meta name="theme-color" content="#172d3b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -170,6 +171,24 @@ td small{font-size:11px;color:#7c878b}
 .property-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 12px}.property-stats>div{background:#f8f6f1;border:1px solid #e8e2d8;border-radius:10px;padding:10px 12px}.property-stats small{display:block;color:#78838b;font-size:11px}.property-stats strong{display:block;color:#1c3544;font-family:Georgia,serif;font-size:22px;margin-top:3px}.property-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,.45fr) minmax(145px,.45fr);gap:8px;margin:0 0 12px}.property-toolbar .field{min-width:0}@media(max-width:600px){.property-stats{gap:6px}.property-stats>div{padding:9px 8px}.property-stats strong{font-size:20px}.property-stats small{font-size:10px}.property-toolbar{grid-template-columns:1fr 1fr}.property-toolbar input{grid-column:1/-1}}.price-history{grid-column:1/-1;border-top:1px solid #eeeae2;padding-top:8px;color:#53616a;font-size:12px}.price-history summary{cursor:pointer;font-weight:700;color:#52636b;padding:3px 0}.price-history-list{display:grid;gap:7px;margin-top:8px}.price-history-entry{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 10px;background:#f8f6f1;border-radius:8px}.price-history-entry b{color:#1c3544}.price-history-entry small{color:#859095}.property-status{display:inline-block;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;background:#edf1f3;color:#425b68}.property-status[data-status="Disponible"]{background:#e7f1e9;color:#286348}.property-status[data-status="Sous offre"]{background:#f5ecd9;color:#89602b}.property-status[data-status="Vendu"]{background:#e8edf0;color:#355568}.property-status[data-status="Retiré"]{background:#f3e9e6;color:#8c5148}
 /* Biens et rapprochement automatique */
 .agenda-item .rowactions{display:flex;gap:6px;flex-wrap:wrap}.agenda-item .rowactions button{padding:8px 10px;font-size:12px;white-space:nowrap}@media(max-width:600px){.agenda-item .rowactions{grid-column:1/-1;justify-content:flex-start}.agenda-item .rowactions button{flex:1}}
+
+/* v26 — confort mobile, accessibilité clavier et préférences système */
+:focus-visible{outline:3px solid #b99359!important;outline-offset:3px}
+button:disabled{opacity:.58;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+a{color:#24556b}
+a:focus-visible{border-radius:4px}
+@media(max-width:700px){
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  input,select,textarea{font-size:16px!important}
+  button{min-height:44px}
+  .wrap{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+  .dialog{max-height:calc(100dvh - 24px);padding:18px}
+  .formfoot{position:sticky;bottom:-18px;background:#fffefa;padding:12px 0 calc(8px + env(safe-area-inset-bottom));margin-top:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
 </style>
 </head>
 <body>
