@@ -455,17 +455,28 @@ window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleSt
 </script>
 <script type="module">
 let createClient;
-try {
-  ({createClient}=await import('https://esm.sh/@supabase/supabase-js@2'));
-} catch (firstError) {
+async function loadSupabaseModule(url, timeoutMs=7000) {
+  return await Promise.race([
+    import(url),
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('Délai dépassé pour '+url)),timeoutMs))
+  ]);
+}
+let moduleError;
+for (const url of [
+  'https://esm.sh/@supabase/supabase-js@2',
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',
+  'https://unpkg.com/@supabase/supabase-js@2/dist/esm/index.js'
+]) {
   try {
-    ({createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'));
-  } catch (secondError) {
-    const message='Impossible de charger le service de connexion. Détail : '+(secondError?.message||firstError?.message||'bibliothèque inaccessible');
-    const status=document.getElementById('authMsg');
-    if(status) status.textContent=message;
-    throw new Error(message);
-  }
+    ({createClient}=await loadSupabaseModule(url));
+    break;
+  } catch (error) { moduleError=error; }
+}
+if (!createClient) {
+  const status=document.getElementById('authMsg');
+  const message='Connexion indisponible : impossible de télécharger la bibliothèque Supabase. '+(moduleError?.message||'Vérifiez le réseau ou le navigateur.');
+  if(status) status.textContent=message;
+  throw new Error(message);
 }
 window.__visibienModuleStarted=true;
 if('serviceWorker' in navigator){
