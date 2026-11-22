@@ -450,9 +450,12 @@ a:focus-visible{border-radius:4px}
 <script>
 window.addEventListener('error', e => { const m=document.getElementById('authMsg'); if(m) m.textContent='Erreur de chargement : '+(e.message||'vérifiez votre connexion puis rechargez la page.'); });
 window.addEventListener('unhandledrejection', e => { const m=document.getElementById('authMsg'); if(m) m.textContent='Erreur : '+(e.reason?.message||String(e.reason||'réessayez.')); });
+window.__visibienModuleStarted=false;
+window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleStarted){const m=document.getElementById('authMsg');if(m)m.textContent='Le module de connexion ne s’est pas chargé. Vérifiez votre connexion internet puis rechargez la page.'}},2500));
 </script>
 <script type="module">
-import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.117.1';
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+window.__visibienModuleStarted=true;
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker indisponible',err)));
 }
