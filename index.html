@@ -451,9 +451,10 @@ a:focus-visible{border-radius:4px}
 window.addEventListener('error', e => { const m=document.getElementById('authMsg'); if(m) m.textContent='Erreur de chargement : '+(e.message||'vérifiez votre connexion puis rechargez la page.'); });
 window.addEventListener('unhandledrejection', e => { const m=document.getElementById('authMsg'); if(m) m.textContent='Erreur : '+(e.reason?.message||String(e.reason||'réessayez.')); });
 window.__visibienModuleStarted=false;
-window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleStarted){const m=document.getElementById('authMsg');if(m)m.textContent='Le module de connexion ne s’est pas chargé. Vérifiez votre connexion internet puis rechargez la page.'}},2500));
+window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleStarted){const m=document.getElementById('authMsg');if(m)m.textContent='Le navigateur n’a pas démarré le script de l’application. Essayez d’ouvrir le lien directement dans Safari, hors aperçu intégré.'}},30000));
 </script>
 <script type="module">
+window.__visibienModuleStarted=true;
 let createClient;
 async function loadSupabaseModule(url, timeoutMs=7000) {
   return await Promise.race([
@@ -478,7 +479,6 @@ if (!createClient) {
   if(status) status.textContent=message;
   throw new Error(message);
 }
-window.__visibienModuleStarted=true;
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker indisponible',err)));
 }
