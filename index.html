@@ -537,10 +537,17 @@ window.__visibienAuthReady=window.__supabaseReady.then(lib=>{
       const {data,error}=await authDb.auth.signInWithPassword({email,password});
       if(error)msg.textContent='Connexion impossible : '+error.message;
       else{
-        /* Attend la persistance de la session, puis recharge : l'application principale restaure alors cette session avec son propre client Supabase. */
-        await authDb.auth.getSession();
-        msg.textContent='Connexion réussie. Ouverture de votre espace…';
-        setTimeout(()=>window.location.reload(),700);
+        const {data:sessionData,error:sessionError}=await authDb.auth.getSession();
+        if(sessionError||!sessionData?.session?.user){
+          msg.textContent='Connexion effectuée, mais la session ne peut pas être récupérée. Réessaie une fois.';
+          return;
+        }
+        if(typeof window.__visibienOpenApp==='function'){
+          msg.textContent='Connexion réussie. Ouverture de votre espace…';
+          await window.__visibienOpenApp(sessionData.session.user);
+        }else{
+          msg.textContent='Connexion réussie, mais le CRM ne s’est pas initialisé. Recharge la page et réessaie.';
+        }
       }
     }
   };
@@ -621,6 +628,7 @@ async function restoreAuth(){
 restoreAuth();
 function screen(x){$('authPanel').classList.toggle('hidden',x!=='auth');$('agencyPanel').classList.toggle('hidden',x!=='agency');$('crmApp').classList.toggle('hidden',x!=='crm');$('logoutBtn').classList.toggle('hidden',!user);$('addBtn').classList.toggle('hidden',x!=='crm');$('agencySwitchBtn').classList.toggle('hidden',x!=='crm'||agencyCount<2)}
 async function agencies(){const {data,error}=await db.from('agency_members').select('agency_id,role,agencies(name,city)').eq('user_id',user.id);if(error){$('agencyMsg').textContent=error.message;screen('agency');return}const memberships=data||[];agencyCount=memberships.length;$('agencyChooser').classList.toggle('hidden',memberships.length===0);$('agencySelect').innerHTML=memberships.map(x=>'<option value="'+x.agency_id+'" data-role="'+esc(x.role)+'" data-name="'+esc(x.agencies?.name||'Agence')+'" data-city="'+esc(x.agencies?.city||'')+'">'+esc(x.agencies?.name||'Agence')+' — '+esc(x.role)+'</option>').join('');if(memberships.length===1){agency=memberships[0].agency_id;agencyRole=memberships[0].role;$('agencySubtitle').textContent=[memberships[0].agencies?.name,memberships[0].agencies?.city].filter(Boolean).join(' · ');screen('crm');await load();return}$('agencyMsg').textContent=memberships.length?'Choisissez votre agence.':'Créez votre première agence.';screen('agency')}
+window.__visibienOpenApp=async sessionUser=>{user=sessionUser;activeUserId=sessionUser.id;await agencies()};
 async function load(){const {data,error}=await db.from('leads').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(error){alert(error.message);return}leads=(data||[]).map(x=>({id:x.id,createdBy:x.created_by,assignedTo:x.assigned_to||null,name:x.full_name,phone:x.phone,email:x.email,project:x.project,budget:x.budget_max??x.budget,budgetMin:x.budget_min??'',budgetMax:x.budget_max??x.budget??'',searchSector:x.search_sector||'',bedroomsMin:x.bedrooms_min??'',surfaceMin:x.surface_min??'',hasGarden:!!x.has_garden,hasTerrace:!!x.has_terrace,hasParking:!!x.has_parking,hasPool:!!x.has_pool,mustHave:x.must_have||'',property:x.property||'',status:x.status,date:x.follow_up_at?.slice(0,10)||'',notes:x.notes||'',photoPath:x.photo_path||'',photoUrl:null,visitAddress:x.visit_address||'',visitDate:x.visit_date||'',visitTime:x.visit_time?.slice(0,5)||'',created:new Date(x.created_at).getTime(),lastUpdated:new Date(x.updated_at||x.created_at).getTime()}));await Promise.all(leads.map(async x=>{if(x.photoPath){const {data}=await db.storage.from('lead-property-photos').createSignedUrl(x.photoPath,3600);x.photoUrl=data?.signedUrl||null}}));const {data:propertyData,error:propertyError}=await db.from('properties').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(propertyError){alert('Impossible de charger les biens : '+propertyError.message);return}properties=(propertyData||[]).map(x=>({id:x.id,title:x.title,type:x.property_type||'',sector:x.sector||'',address:x.address||'',price:x.price,bedrooms:x.bedrooms,surface:x.surface,garden:!!x.has_garden,terrace:!!x.has_terrace,parking:!!x.has_parking,pool:!!x.has_pool,notes:x.notes||'',createdBy:x.created_by,photoPaths:x.photo_paths||[],photoUrls:[],priceHistory:Array.isArray(x.price_history)?x.price_history:[],statusHistory:Array.isArray(x.status_history)?x.status_history:[],status:x.status,created:new Date(x.created_at).getTime()}));await Promise.all(properties.map(async x=>{if(x.photoPaths.length){const {data}=await db.storage.from('lead-property-photos').createSignedUrls(x.photoPaths,3600);x.photoUrls=(data||[]).map(y=>y.signedUrl).filter(Boolean)}}));agencyMembers=[];if(agencyRole==='owner'||agencyRole==='admin'){const memberResult=await db.functions.invoke('agency-director-members',{body:{agency_id:agency}});if(memberResult.error)console.warn('Membres agence indisponibles',memberResult.error.message);else agencyMembers=memberResult.data?.members||[]}render();renderAgenda();renderProperties();updateDashboardCharts();renderAgencyDirectorDashboard();const deepLinkLead=new URLSearchParams(window.location.search).get("lead");if(deepLinkLead)openLeadProfile(deepLinkLead)}
 function dateDisplay(x){if(!x.date)return '—';const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),label=new Date(x.date+'T00:00:00').toLocaleDateString('fr-FR');if(x.date<today)return '<span class="due">⚠ En retard · '+label+'</span>';if(x.date===today)return '<span class="today">● Aujourd’hui</span>';return label}
 function leadCompleteness(x){return [!!(x.phone||x.email),!!x.project,!!(x.budgetMin||x.budgetMax||x.budget),!!x.searchSector,!!x.property].filter(Boolean).length}
@@ -806,4 +814,30 @@ $('propertyForm').onsubmit=async e=>{
 };
 $('propertiesList').onclick=e=>{
  const match=e.target.dataset.propertyMatch,edit=e.target.dataset.propertyEdit;
- if(match){const p=properties.find(x=>x.id===match);if(p)showMatching(p)}
+ if(match){const p=properties.find(x=>x.id===match);if(p)showMatching(p)} if(edit){
+  const p=properties.find(x=>x.id===edit);
+  if(p){
+   $('propertyId').value=p.id;
+   $('propertyTitle').value=p.title||'';
+   $('propertyType').value=p.type||'';
+   $('propertySector').value=p.sector||'';
+   $('propertyAddress').value=p.address||'';
+   $('propertyPrice').value=p.price??'';
+   $('propertyBedrooms').value=p.bedrooms??'';
+   $('propertySurface').value=p.surface??'';
+   $('propertyGarden').checked=!!p.garden;
+   $('propertyTerrace').checked=!!p.terrace;
+   $('propertyParking').checked=!!p.parking;
+   $('propertyPool').checked=!!p.pool;
+   $('propertyNotes').value=p.notes||'';
+   $('propertyStatus').value=p.status||'Disponible';
+   $('propertyPhotoPreview').innerHTML=(p.photoUrls||[]).map(u=>'<img src="'+esc(u)+'" alt="Photo du bien" class="property-photo">').join('');
+   $('propertyFormTitle').textContent='Modifier le bien';
+   $('propertyForm').classList.remove('hidden');
+   $('propertyTitle').focus();
+  }
+ }
+};
+</script>
+</body>
+</html>
