@@ -48,3 +48,25 @@ on public.notification_log(lead_id, recipient_id, notification_type, scheduled_f
 --     body := jsonb_build_object('triggered_at',now())
 --   ); $job$
 -- );
+
+-- Owner/admin-only member labels for the director dashboard.
+create or replace function public.get_agency_member_labels(p_agency_id uuid)
+returns table(user_id uuid,email text,role text)
+language plpgsql
+security definer
+set search_path=''
+as $$
+begin
+  if auth.uid() is null or not private.has_agency_role(p_agency_id,array['owner','admin']::text[]) then
+    raise exception 'not authorized';
+  end if;
+  return query
+    select m.user_id,u.email,m.role
+    from public.agency_members m
+    join auth.users u on u.id=m.user_id
+    where m.agency_id=p_agency_id
+    order by m.created_at;
+end;
+$$;
+revoke all on function public.get_agency_member_labels(uuid) from public, anon;
+grant execute on function public.get_agency_member_labels(uuid) to authenticated;
