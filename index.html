@@ -470,6 +470,33 @@ window.addEventListener('unhandledrejection', e => { const m=document.getElement
 window.__visibienModuleStarted=false;
 window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleStarted){const m=document.getElementById('authMsg');if(m)m.textContent='Le navigateur n’a pas démarré le script de l’application. Essayez d’ouvrir le lien directement dans Safari, hors aperçu intégré.'}},30000));
 </script>
+<script>
+/* Gestion de secours du bouton : feedback immédiat, même si le module tarde à démarrer. */
+(function(){
+  const button=document.getElementById('authSubmit');
+  if(!button)return;
+  button.addEventListener('click',async function(event){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const msg=document.getElementById('authMsg');
+    const email=document.getElementById('authEmail');
+    const password=document.getElementById('authPassword');
+    if(!email||!password||!msg)return;
+    if(!email.value.trim()||!email.checkValidity()){msg.textContent='Saisissez une adresse e-mail valide.';email.focus();return;}
+    if(!password.value){msg.textContent='Saisissez votre mot de passe.';password.focus();return;}
+    if(typeof window.__visibienAuthAction!=='function'){
+      msg.textContent='Le service de connexion ne s’est pas initialisé. Rechargez la page ; si le problème persiste, envoyez-moi une capture de cet écran.';
+      return;
+    }
+    button.disabled=true;
+    button.textContent='Connexion en cours…';
+    msg.textContent='Connexion en cours…';
+    try{await window.__visibienAuthAction(email.value.trim(),password.value);}
+    catch(error){msg.textContent='Erreur de connexion : '+(error&&error.message?error.message:String(error));}
+    finally{button.disabled=false;button.textContent=window.__visibienAuthMode==='signup'?'Créer mon compte':'Se connecter';}
+  },true);
+})();
+</script>
 <script type="module">
 window.__visibienModuleStarted=true;
 let createClient;
@@ -500,6 +527,21 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker indisponible',err)));
 }
 const db=createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
+window.__visibienAuthMode='login';
+window.__visibienAuthAction=async(email,password)=>{
+ const msg=document.getElementById('authMsg');
+ if(window.__visibienAuthMode==='signup'&&password.length<8){msg.textContent='Le mot de passe doit contenir au moins 8 caractères.';return;}
+ if(window.__visibienAuthMode==='login'){
+  const {error}=await db.auth.signInWithPassword({email,password});
+  if(error)msg.textContent='Connexion impossible : '+error.message;
+  else msg.textContent='Connexion réussie…';
+ }else{
+  const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});
+  if(error)msg.textContent='Création impossible : '+error.message;
+  else if(data.session)msg.textContent='Compte créé ! Vous pouvez maintenant créer votre agence.';
+  else{msg.textContent='Compte créé ! Consultez votre e-mail pour confirmer votre adresse.';document.getElementById('resendConfirm').classList.remove('hidden');}
+ }
+};
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let user=null,agency=null,agencyRole=null,agencyCount=0,leads=[],properties=[],agencyMembers=[],activeUserId=null;
 db.auth.onAuthStateChange((event,session)=>{
@@ -644,7 +686,7 @@ $('addHistoryNote').onclick=async()=>{
 };
 
 let authMode='login';
-function setAuthMode(mode){authMode=mode;$('resendConfirm').classList.add('hidden');const login=mode==='login';$('showLogin').className=login?'primary':'secondary';$('showSignup').className=login?'secondary':'primary';$('showLogin').setAttribute('aria-pressed',String(login));$('showSignup').setAttribute('aria-pressed',String(!login));$('authSubmit').textContent=login?'Se connecter':'Créer mon compte';$('authHelp').textContent=login?'Saisissez les identifiants de votre compte VisiBien.':'Choisissez un mot de passe d’au moins 8 caractères. Un e-mail de confirmation pourra vous être envoyé.';$('authPassword').setAttribute('autocomplete',login?'current-password':'new-password');$('authPassword').placeholder=login?'Votre mot de passe':'8 caractères minimum';$('authPassword').minLength=login?1:8;$('authMsg').textContent=''}
+function setAuthMode(mode){authMode=mode;window.__visibienAuthMode=mode;$('resendConfirm').classList.add('hidden');const login=mode==='login';$('showLogin').className=login?'primary':'secondary';$('showSignup').className=login?'secondary':'primary';$('showLogin').setAttribute('aria-pressed',String(login));$('showSignup').setAttribute('aria-pressed',String(!login));$('authSubmit').textContent=login?'Se connecter':'Créer mon compte';$('authHelp').textContent=login?'Saisissez les identifiants de votre compte VisiBien.':'Choisissez un mot de passe d’au moins 8 caractères. Un e-mail de confirmation pourra vous être envoyé.';$('authPassword').setAttribute('autocomplete',login?'current-password':'new-password');$('authPassword').placeholder=login?'Votre mot de passe':'8 caractères minimum';$('authPassword').minLength=login?1:8;$('authMsg').textContent=''}
 $('showLogin').onclick=()=>setAuthMode('login');$('showSignup').onclick=()=>setAuthMode('signup');
 $('resendConfirm').onclick=async()=>{const email=$('authEmail').value.trim(),msg=$('authMsg');if(!email||!$('authEmail').checkValidity()){msg.textContent='Saisissez votre adresse e-mail.';return}msg.textContent='Envoi en cours…';try{const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});msg.textContent=error?'Impossible de renvoyer le message : '+error.message:'Un nouvel e-mail vient d’être envoyé. Utilisez le lien le plus récent.'}catch(e){msg.textContent='Erreur : '+(e.message||String(e))}};
 $('authSubmit').onclick=async()=>{const msg=$('authMsg'),email=$('authEmail').value.trim(),password=$('authPassword').value;msg.textContent=authMode==='login'?'Connexion en cours…':'Création du compte en cours…';if(!email||!$('authEmail').checkValidity()){msg.textContent='Saisissez une adresse e-mail valide, par exemple exemple@domaine.fr.';return}if(!password){msg.textContent='Saisissez votre mot de passe.';return}if(authMode==='signup'&&password.length<8){msg.textContent='Le mot de passe doit contenir au moins 8 caractères.';return}$('authSubmit').disabled=true;try{if(authMode==='login'){const {error}=await db.auth.signInWithPassword({email,password});msg.textContent=error?'Connexion impossible : '+error.message:'Connexion réussie…'}else{const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});if(error){msg.textContent='Création impossible : '+error.message}else if(data.session){msg.textContent='Compte créé ! Vous pouvez maintenant créer votre agence.'}else{msg.textContent='Compte créé ! Ouvrez le dernier e-mail de confirmation envoyé par Supabase. Le lien doit revenir sur VisiBien. Si le lien a expiré, utilisez le bouton ci-dessous.';$('resendConfirm').classList.remove('hidden');setAuthMode('login');$('resendConfirm').classList.remove('hidden')}}}catch(e){msg.textContent='Une erreur est survenue : '+(e.message||String(e))}finally{$('authSubmit').disabled=false}};
