@@ -497,29 +497,36 @@ window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleSt
   },true);
 })();
 </script>
+<script>
+/* Charge Supabase en script classique : plus compatible avec les navigateurs intégrés iOS que les imports ESM CDN. */
+window.__supabaseReady=new Promise(resolve=>{
+  const sources=[
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+    'https://unpkg.com/@supabase/supabase-js@2'
+  ];
+  let index=0;
+  const loadNext=()=>{
+    if(window.supabase&&typeof window.supabase.createClient==='function'){resolve(window.supabase);return;}
+    if(index>=sources.length){resolve(null);return;}
+    const script=document.createElement('script');
+    script.src=sources[index++];
+    script.async=true;
+    let settled=false;
+    const timer=setTimeout(()=>{if(!settled){settled=true;script.remove();loadNext();}},9000);
+    script.onload=()=>{if(settled)return;settled=true;clearTimeout(timer);if(window.supabase&&typeof window.supabase.createClient==='function')resolve(window.supabase);else loadNext();};
+    script.onerror=()=>{if(settled)return;settled=true;clearTimeout(timer);loadNext();};
+    document.head.appendChild(script);
+  };
+  loadNext();
+});
+</script>
 <script type="module">
 window.__visibienModuleStarted=true;
-let createClient;
-async function loadSupabaseModule(url, timeoutMs=7000) {
-  return await Promise.race([
-    import(url),
-    new Promise((_,reject)=>setTimeout(()=>reject(new Error('Délai dépassé pour '+url)),timeoutMs))
-  ]);
-}
-let moduleError;
-for (const url of [
-  'https://esm.sh/@supabase/supabase-js@2',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',
-  'https://unpkg.com/@supabase/supabase-js@2/dist/esm/index.js'
-]) {
-  try {
-    ({createClient}=await loadSupabaseModule(url));
-    break;
-  } catch (error) { moduleError=error; }
-}
-if (!createClient) {
+const supabaseLibrary=await window.__supabaseReady;
+const createClient=supabaseLibrary?.createClient;
+if (typeof createClient!=='function') {
   const status=document.getElementById('authMsg');
-  const message='Connexion indisponible : impossible de télécharger la bibliothèque Supabase. '+(moduleError?.message||'Vérifiez le réseau ou le navigateur.');
+  const message='Connexion indisponible : les deux serveurs de la bibliothèque Supabase sont injoignables. Ouvrez la page dans Safari et vérifiez votre connexion Internet.';
   if(status) status.textContent=message;
   throw new Error(message);
 }
