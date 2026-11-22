@@ -570,9 +570,16 @@ window.__visibienAuthAction=async(email,password)=>{
  const msg=document.getElementById('authMsg');
  if(window.__visibienAuthMode==='signup'&&password.length<8){msg.textContent='Le mot de passe doit contenir au moins 8 caractères.';return;}
  if(window.__visibienAuthMode==='login'){
-  const {error}=await db.auth.signInWithPassword({email,password});
+  const {data,error}=await db.auth.signInWithPassword({email,password});
   if(error)msg.textContent='Connexion impossible : '+error.message;
-  else{await db.auth.getSession();msg.textContent='Connexion réussie. Ouverture de votre espace…';setTimeout(()=>window.location.reload(),700);}
+  else{
+   const {data:sessionData,error:sessionError}=await db.auth.getSession();
+   const session=sessionData?.session||data?.session;
+   if(sessionError||!session?.user){msg.textContent='Connexion effectuée, mais la session ne peut pas être récupérée. Réessaie une fois.';return;}
+   user=session.user;activeUserId=user.id;
+   msg.textContent='Connexion réussie. Ouverture de votre espace…';
+   await agencies();
+  }
  }else{
   const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});
   if(error)msg.textContent='Création impossible : '+error.message;
