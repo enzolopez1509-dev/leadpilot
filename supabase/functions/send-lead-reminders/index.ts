@@ -68,6 +68,18 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ error: "Unable to load subscriptions" }), { status: 500, headers: corsHeaders });
   }
 
+  const agencyIds = [...new Set(leads.map((lead: any) => lead.agency_id).filter(Boolean))];
+  const { data: memberships, error: membershipsError } = await admin
+    .from("agency_members")
+    .select("agency_id,user_id")
+    .in("agency_id", agencyIds)
+    .in("user_id", recipientIds);
+  if (membershipsError) {
+    console.error("Unable to validate reminder recipients", membershipsError.message);
+    return new Response(JSON.stringify({ error: "Unable to validate recipients" }), { status: 500, headers: corsHeaders });
+  }
+  const validRecipients = new Set((memberships ?? []).map((row: any) => row.agency_id + ":" + row.user_id));
+
   const byUser = new Map<string, any[]>();
   for (const sub of subscriptions ?? []) {
     const bucket = byUser.get(sub.user_id) ?? [];
@@ -81,6 +93,10 @@ Deno.serve(async (req: Request) => {
 
   for (const lead of leads) {
     const recipientId = lead.assigned_to || lead.created_by;
+    if (!validRecipients.has(lead.agency_id + ":" + recipientId)) {
+      skipped++;
+      continue;
+    }
     const targets = byUser.get(recipientId) ?? [];
     if (!targets.length) {
       skipped++;
