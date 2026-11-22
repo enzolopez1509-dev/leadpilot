@@ -1,7 +1,24 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<script>
+/* VisiBien: retire les anciens caches PWA qui peuvent servir une page obsolète */
+(function(){
+  try {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        return Promise.all(regs.map(function(reg){return reg.unregister();}));
+      }).catch(function(){});
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(keys){
+        return Promise.all(keys.filter(function(k){return k.indexOf('visibien-shell-')===0 || k.indexOf('leadpilot-shell-')===0;}).map(function(k){return caches.delete(k);}));
+      }).catch(function(){});
+    }
+  } catch(e) {}
+})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="VisiBien, le CRM immobilier pour suivre vos prospects, gérer vos biens, organiser vos visites et piloter les relances de votre agence.">
 <meta name="theme-color" content="#172d3b">
 <meta name="apple-mobile-web-app-capable" content="yes">
