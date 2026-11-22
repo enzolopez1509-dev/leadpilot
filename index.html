@@ -536,10 +536,8 @@ async function setLeadFollowUp(id,nextDate,activityType,description){
 $('leadCards').addEventListener('click',async e=>{
  const done=e.target.closest('[data-follow]');
  const snooze=e.target.closest('[data-snooze]');
- const profile=e.target.closest('[data-profile]');
  if(done){e.preventDefault();await setLeadFollowUp(done.dataset.follow,null,'follow_up','Relance effectuée · prochaine relance clôturée');return}
  if(snooze){e.preventDefault();const d=localDateOffset(1);await setLeadFollowUp(snooze.dataset.snooze,d,'follow_up','Relance reportée au '+new Date(d+'T00:00:00').toLocaleDateString('fr-FR'));return}
- if(profile){e.preventDefault();openLeadProfile(profile.dataset.profile)}
 });
 $('notificationItems').addEventListener('click',e=>{
  const b=e.target.closest('[data-notification-lead]');if(b)openLeadProfile(b.dataset.notificationLead);
