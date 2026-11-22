@@ -524,6 +524,7 @@ window.__supabaseReady=new Promise(resolve=>{
 window.__visibienAuthReady=window.__supabaseReady.then(lib=>{
   if(!lib) throw new Error('Bibliothèque Supabase inaccessible depuis ce navigateur.');
   const authDb=lib.createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
+  window.__visibienDb=authDb;
   window.__visibienAuthAction=async(email,password)=>{
     const msg=document.getElementById('authMsg');
     if(window.__visibienAuthMode==='signup'){
@@ -563,7 +564,7 @@ if (typeof createClient!=='function') {
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Service worker indisponible',err)));
 }
-const db=createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
+const db=window.__visibienDb||createClient('https://mxbprsyrcfjtjxuejxmj.supabase.co','sb_publishable_WbFXyk_qyfh5GCwTbAdHSw_wRRjqzdZ',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 window.__visibienAuthMode='login';
 window.__visibienAuthAction=async(email,password)=>{
  const msg=document.getElementById('authMsg');
@@ -571,7 +572,7 @@ window.__visibienAuthAction=async(email,password)=>{
  if(window.__visibienAuthMode==='login'){
   const {error}=await db.auth.signInWithPassword({email,password});
   if(error)msg.textContent='Connexion impossible : '+error.message;
-  else msg.textContent='Connexion réussie…';
+  else{await db.auth.getSession();msg.textContent='Connexion réussie. Ouverture de votre espace…';setTimeout(()=>window.location.reload(),700);}
  }else{
   const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:'https://enzolopez1509-dev.github.io/leadpilot/'}});
   if(error)msg.textContent='Création impossible : '+error.message;
