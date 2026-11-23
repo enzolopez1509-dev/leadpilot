@@ -2,23 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script>
-/* VisiBien: retire les anciens caches PWA qui peuvent servir une page obsolète */
-(function(){
-  try {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs){
-        return Promise.all(regs.map(function(reg){return reg.unregister();}));
-      }).catch(function(){});
-    }
-    if ('caches' in window) {
-      caches.keys().then(function(keys){
-        return Promise.all(keys.filter(function(k){return k.indexOf('visibien-shell-')===0 || k.indexOf('leadpilot-shell-')===0;}).map(function(k){return caches.delete(k);}));
-      }).catch(function(){});
-    }
-  } catch(e) {}
-})();
-</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="VisiBien, le CRM immobilier pour suivre vos prospects, gérer vos biens, organiser vos visites et piloter les relances de votre agence.">
 <meta name="theme-color" content="#172d3b">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -78,7 +62,7 @@ td small{font-size:11px;color:#7c878b}
 .dialog{background:#fffefa;border:1px solid #e7e0d4;border-radius:16px;box-shadow:0 24px 80px #10212d40;padding:24px}
 .dialog h2,#categoryTitle{font-family:Georgia,"Times New Roman",serif;color:#1c3544}
 .note{color:#859095}
-#authPanel,#agencyPanel{box-shadow:0 18px 55px #24374612!important;border-color:#e3ddd1}
+#authPanel,#agencyPanel,#emailSetupPanel{box-shadow:0 18px 55px #24374612!important;border-color:#e3ddd1}
 #authPanel h2,#agencyPanel h2{font-family:Georgia,"Times New Roman",serif;color:#1c3544;font-size:27px}
 #categoryPage{border-left:3px solid #b99359}
 @media(max-width:700px){.wrap{padding:13px}.top{padding:17px;border-radius:14px}.brand h1{font-size:23px}.stats{gap:9px}.stat{padding:14px 12px}.stat strong{font-size:27px}.panel{padding:14px}.actions button{flex:1}}
@@ -359,7 +343,19 @@ a:focus-visible{border-radius:4px}
 <button type="button" class="primary" id="authSubmit" style="width:100%;margin-top:8px">Se connecter</button>
 <p class="note" id="authMsg" role="status" aria-live="polite"></p>
 <button type="button" class="secondary hidden" id="resendConfirm" style="width:100%;margin-top:8px">Renvoyer l’e-mail de confirmation</button>
-</section><section class="panel hidden" id="agencyPanel" style="max-width:520px;margin:30px auto"><h2>Votre agence</h2><label for="agencyName" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Nom de l’agence</label><input class="field" id="agencyName" autocomplete="organization" placeholder="Nom de l’agence"><label for="agencyCity" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Ville de l’agence</label><input class="field" id="agencyCity" autocomplete="address-level2" placeholder="Ex. Cannes, Lyon, Bordeaux" required><button class="primary" id="createAgency" style="margin-top:12px">Créer mon agence</button><div id="agencyChooser" class="hidden"><label for="agencySelect" style="display:block;font-size:13px;font-weight:650;margin:18px 0 6px">Choisir une agence</label><select class="field" id="agencySelect" aria-label="Choisir une agence"></select><button class="secondary" id="openAgency" style="margin-top:10px">Ouvrir l’agence</button></div><p class="note" id="agencyMsg"></p></section><button class="secondary hidden" id="logoutBtn">Déconnexion</button><div id="crmApp" class="hidden">
+</section><section class="panel hidden" id="emailSetupPanel" style="max-width:520px;margin:30px auto">
+<h2 style="margin-top:0">Configurez vos rappels par e-mail</h2>
+<p style="color:var(--muted)">Avant d’accéder à votre agence, indiquez l’adresse e-mail sur laquelle vous souhaitez recevoir les rappels professionnels. Aucun numéro de téléphone n’est demandé.</p>
+<label for="setupNotificationEmail" style="display:block;font-size:13px;font-weight:650;margin:14px 0 6px">Adresse e-mail professionnelle</label>
+<input class="field" id="setupNotificationEmail" type="email" autocomplete="email" required placeholder="vous@entreprise.fr">
+<label style="display:flex;align-items:flex-start;gap:9px;font-size:13px;margin:14px 0">
+<input id="emailSetupConsent" type="checkbox" required style="margin-top:3px">
+J’accepte de recevoir par e-mail les rappels et alertes professionnelles de VisiBien.
+</label>
+<p class="note">Les rappels sont traités automatiquement toutes les 15 minutes. Leur livraison nécessite la configuration du service e-mail de l’agence.</p>
+<button type="button" class="primary" id="saveEmailSetup" style="width:100%">Enregistrer mon adresse e-mail</button>
+<p class="note" id="emailSetupMsg" role="status" aria-live="polite"></p>
+</section><section class="panel hidden" id="agencyPanel"" style="max-width:520px;margin:30px auto"><h2>Votre agence</h2><label for="agencyName" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Nom de l’agence</label><input class="field" id="agencyName" autocomplete="organization" placeholder="Nom de l’agence"><label for="agencyCity" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Ville de l’agence</label><input class="field" id="agencyCity" autocomplete="address-level2" placeholder="Ex. Cannes, Lyon, Bordeaux" required><button class="primary" id="createAgency" style="margin-top:12px">Créer mon agence</button><div id="agencyChooser" class="hidden"><label for="agencySelect" style="display:block;font-size:13px;font-weight:650;margin:18px 0 6px">Choisir une agence</label><select class="field" id="agencySelect" aria-label="Choisir une agence"></select><button class="secondary" id="openAgency" style="margin-top:10px">Ouvrir l’agence</button></div><p class="note" id="agencyMsg"></p></section><button class="secondary hidden" id="logoutBtn">Déconnexion</button><div id="crmApp" class="hidden">
 <section id="categoryPage" class="panel hidden" style="margin-bottom:18px"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="button" class="secondary" id="backDashboard">← Tableau de bord</button><div><h2 id="categoryTitle" style="margin:0">Prospects</h2><p id="categoryDescription" class="note" style="margin:3px 0 0">Liste filtrée</p></div></div><section class="panel" id="leadsPanel">
 <div class="toolbar"><input class="field search-field" id="search" type="search" aria-label="Rechercher un prospect" placeholder="Rechercher un prospect…"><button type="button" class="secondary" id="exportLeadsBtn">Exporter CSV</button><button type="button" class="secondary filter-toggle" id="filterToggle">☷ Filtres <span id="filterCount"></span></button></div><div class="filter-panel hidden" id="filterPanel"><select class="field" id="filter" aria-label="Filtrer par statut"><option value="">Tous les statuts</option><option>Nouveau</option><option>Contacté</option><option>Visite</option><option>Gagné</option><option>Perdue</option></select><select class="field" id="followFilter" aria-label="Filtrer les relances"><option value="">Toutes les relances</option><option value="due">À relancer</option><option value="overdue">En retard</option><option value="today">Aujourd’hui</option><option value="upcoming">À venir</option><option value="next7">Prochains 7 jours</option><option value="none">Sans date</option><option value="dormant">Fiches à revoir (14 j+)</option></select><select class="field" id="sort" aria-label="Trier les prospects"><option value="recent">Plus récents</option><option value="priority">Priorité commerciale</option><option value="follow">Date de relance</option><option value="name">Nom A → Z</option></select></div><div id="leadCards" class="lead-cards"></div><div class="empty hidden" id="empty">Aucun prospect pour le moment.<br>Ajoutez votre premier contact pour commencer.</div>
 <p class="note">Les prospects sont synchronisés dans la base sécurisée de votre agence.</p>
@@ -397,7 +393,7 @@ a:focus-visible{border-radius:4px}
 <label class="full">Photos du bien (JPG, PNG ou WebP · 5 Mo maximum par photo)<input class="field" id="propertyPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple><small class="note">Tu peux sélectionner plusieurs photos depuis ton iPhone.</small></label><div class="full" id="propertyPhotoPreview"></div><label class="full">Informations complémentaires<textarea class="field" id="propertyNotes" rows="2" placeholder="Étage, vue, ascenseur, état…"></textarea></label>
 </div><div class="formfoot"><button type="button" class="secondary" id="cancelProperty">Annuler</button><button type="submit" class="primary">Enregistrer le bien</button></div></form>
 <div id="propertiesList" class="agenda-list"></div><div id="propertiesEmpty" class="empty hidden">Aucun bien enregistré pour le moment.<br>Ajoute ton premier bien pour trouver ses acheteurs.</div>
-</section><div class="agenda-entry" id="agendaEntry"><button type="button" class="secondary" id="agendaBtn">📅 Agenda des visites</button><button type="button" class="secondary" id="propertiesHomeBtn">🏠 Biens</button><button type="button" class="primary" id="matchHomeBtn">⌕ Trouver des acheteurs</button></div><section class="panel" id="commercialOverview" style="margin:0 0 10px;padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:12px">Vue commerciale</b><small class="note" style="margin:0">Indicateurs sur les dossiers chargés</small></div><div id="commercialMetrics" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px"><div><small>Nouveaux</small><b id="metricNew">0</b></div><div><small>Actifs</small><b id="metricActive">0</b></div><div><small>Biens disponibles</small><b id="metricProperties">0</b></div><div><small>Taux gagnés</small><b id="metricWonRate">0 %</b></div></div></section><section class="panel hidden" id="directorPanel" style="margin:0 0 10px;padding:14px 16px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:13px">Pilotage directeur d’agence</b><small class="note" style="margin:0">Performances et dossiers à risque · responsables uniquement</small></div><div id="directorKpis" class="director-kpis"></div><div id="directorAgents" class="director-agents"></div><p class="note" style="margin:8px 0 0">Attribution calculée sur le commercial assigné ; à défaut, sur le créateur du prospect. Un dossier à risque est actif avec une relance dépassée ou sans activité depuis 14 jours.</p></section><section class="panel" id="backupPanel" style="margin:0 0 10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b style="font-size:12px">Sauvegarde complète</b><small style="display:block;color:#849096">Prospects, biens et historique des échanges (hors fichiers photo)</small></div><button type="button" class="secondary" id="exportBackupBtn">Télécharger la sauvegarde JSON</button></section><section class="panel" id="notificationCenter" style="margin:0 0 10px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b style="font-size:12px">🔔 Alertes VisiBien</b><small id="notificationCount" class="note" style="margin:0">0 alerte</small></div><div id="notificationItems" class="agenda-list" style="margin-top:8px"></div><p id="notificationEmpty" class="note" style="margin:7px 0 0">Aucune alerte urgente. Les relances et visites à venir apparaîtront ici.</p><div class="notification-controls"><input type="email" id="notificationEmail" placeholder="Adresse e-mail pour les rappels" aria-label="Adresse e-mail pour les rappels" style="max-width:270px"><button type="button" class="primary" id="enableEmailReminders">Activer les rappels par e-mail</button><small id="reminderNotificationStatus" class="note">Les rappels sont envoyés par e-mail, même lorsque VisiBien est fermé.</small></div></section><section class="panel" id="priorityPanel" style="margin:0 0 10px;padding:8px 10px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font-size:12px;white-space:nowrap">Priorités</b><button type="button" class="secondary priority-action" data-priority="overdue" style="padding:5px 9px;font-size:11px">⚠ Retard <strong id="priorityOverdue">0</strong></button><button type="button" class="secondary priority-action" data-priority="today" style="padding:5px 9px;font-size:11px">● Aujourd’hui <strong id="priorityToday">0</strong></button><button type="button" class="secondary priority-action" data-priority="next7" style="padding:5px 9px;font-size:11px">↗ 7 jours <strong id="priorityNext7">0</strong></button><button type="button" class="secondary priority-action" data-priority="none" style="padding:5px 9px;font-size:11px">Sans date <strong id="priorityNoDate">0</strong></button><button type="button" class="secondary priority-action" data-priority="dormant" style="padding:5px 9px;font-size:11px">À revoir 14 j+ <strong id="priorityDormant">0</strong></button></div></section><section class="stats" id="dashboardStats">
+</section><div class="agenda-entry" id="agendaEntry"><button type="button" class="secondary" id="agendaBtn">📅 Agenda des visites</button><button type="button" class="secondary" id="propertiesHomeBtn">🏠 Biens</button><button type="button" class="primary" id="matchHomeBtn">⌕ Trouver des acheteurs</button></div><section class="panel" id="commercialOverview" style="margin:0 0 10px;padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:12px">Vue commerciale</b><small class="note" style="margin:0">Indicateurs sur les dossiers chargés</small></div><div id="commercialMetrics" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px"><div><small>Nouveaux</small><b id="metricNew">0</b></div><div><small>Actifs</small><b id="metricActive">0</b></div><div><small>Biens disponibles</small><b id="metricProperties">0</b></div><div><small>Taux gagnés</small><b id="metricWonRate">0 %</b></div></div></section><section class="panel hidden" id="directorPanel" style="margin:0 0 10px;padding:14px 16px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><b style="font-size:13px">Pilotage directeur d’agence</b><small class="note" style="margin:0">Performances et dossiers à risque · responsables uniquement</small></div><div id="directorKpis" class="director-kpis"></div><div id="directorAgents" class="director-agents"></div><p class="note" style="margin:8px 0 0">Attribution calculée sur le commercial assigné ; à défaut, sur le créateur du prospect. Un dossier à risque est actif avec une relance dépassée ou sans activité depuis 14 jours.</p></section><section class="panel" id="backupPanel" style="margin:0 0 10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b style="font-size:12px">Sauvegarde des données accessibles</b><small style="display:block;color:#849096">Prospects, biens et historique accessibles à votre compte (hors fichiers photo)</small></div><button type="button" class="secondary" id="exportBackupBtn">Télécharger la sauvegarde JSON</button></section><section class="panel" id="notificationCenter" style="margin:0 0 10px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><b style="font-size:12px">🔔 Alertes VisiBien</b><small id="notificationCount" class="note" style="margin:0">0 alerte</small></div><div id="notificationItems" class="agenda-list" style="margin-top:8px"></div><p id="notificationEmpty" class="note" style="margin:7px 0 0">Aucune alerte urgente. Les relances et visites à venir apparaîtront ici.</p><div class="notification-controls"><input type="email" id="notificationEmail" placeholder="Adresse e-mail pour les rappels" aria-label="Adresse e-mail pour les rappels" style="max-width:270px"><button type="button" class="primary" id="enableEmailReminders">Activer les rappels par e-mail</button><small id="reminderNotificationStatus" class="note">Les rappels sont traités automatiquement toutes les 15 minutes ; leur livraison nécessite la configuration du service e-mail de l’agence.</small></div></section><section class="panel" id="priorityPanel" style="margin:0 0 10px;padding:8px 10px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font-size:12px;white-space:nowrap">Priorités</b><button type="button" class="secondary priority-action" data-priority="overdue" style="padding:5px 9px;font-size:11px">⚠ Retard <strong id="priorityOverdue">0</strong></button><button type="button" class="secondary priority-action" data-priority="today" style="padding:5px 9px;font-size:11px">● Aujourd’hui <strong id="priorityToday">0</strong></button><button type="button" class="secondary priority-action" data-priority="next7" style="padding:5px 9px;font-size:11px">↗ 7 jours <strong id="priorityNext7">0</strong></button><button type="button" class="secondary priority-action" data-priority="none" style="padding:5px 9px;font-size:11px">Sans date <strong id="priorityNoDate">0</strong></button><button type="button" class="secondary priority-action" data-priority="dormant" style="padding:5px 9px;font-size:11px">À revoir 14 j+ <strong id="priorityDormant">0</strong></button></div></section><section class="stats" id="dashboardStats">
 <div class="stat clickable" id="totalStat" role="button" tabindex="0" title="Afficher tous les prospects"><span>Total prospects</span><strong id="total">0</strong><small>Cliquer pour afficher</small></div><div class="stat clickable" id="followStat" role="button" tabindex="0" title="Afficher les prospects à relancer"><span>À relancer</span><strong id="follow">0</strong><small>Cliquer pour afficher</small></div><div class="stat clickable" id="visitsStat" role="button" tabindex="0" title="Afficher les visites prévues"><span>Visites prévues</span><strong id="visits">0</strong><small>Cliquer pour afficher</small></div><div class="stat clickable" id="wonStat" role="button" tabindex="0" title="Afficher les dossiers gagnés"><span>Mandats / ventes gagnés</span><strong id="won">0</strong><small>Cliquer pour afficher</small></div><div class="stat clickable" id="overdueStat" role="button" tabindex="0" title="Afficher les prospects en retard"><span>Prospects en retard</span><strong id="overdue" class="overdue-count">0</strong><small>Cliquer pour afficher</small></div>
 </section>
 <section class="analytics-grid" id="analyticsDashboard" aria-label="Analyses commerciales">
@@ -626,8 +622,34 @@ async function restoreAuth(){
   }
 }
 restoreAuth();
-function screen(x){$('authPanel').classList.toggle('hidden',x!=='auth');$('agencyPanel').classList.toggle('hidden',x!=='agency');$('crmApp').classList.toggle('hidden',x!=='crm');$('logoutBtn').classList.toggle('hidden',!user);$('addBtn').classList.toggle('hidden',x!=='crm');$('agencySwitchBtn').classList.toggle('hidden',x!=='crm'||agencyCount<2)}
-async function agencies(){const {data,error}=await db.from('agency_members').select('agency_id,role,agencies(name,city)').eq('user_id',user.id);if(error){$('agencyMsg').textContent=error.message;screen('agency');return}const memberships=data||[];agencyCount=memberships.length;$('agencyChooser').classList.toggle('hidden',memberships.length===0);$('agencySelect').innerHTML=memberships.map(x=>'<option value="'+x.agency_id+'" data-role="'+esc(x.role)+'" data-name="'+esc(x.agencies?.name||'Agence')+'" data-city="'+esc(x.agencies?.city||'')+'">'+esc(x.agencies?.name||'Agence')+' — '+esc(x.role)+'</option>').join('');if(memberships.length===1){agency=memberships[0].agency_id;agencyRole=memberships[0].role;$('agencySubtitle').textContent=[memberships[0].agencies?.name,memberships[0].agencies?.city].filter(Boolean).join(' · ');screen('crm');await load();return}$('agencyMsg').textContent=memberships.length?'Choisissez votre agence.':'Créez votre première agence.';screen('agency')}
+function screen(x){$('authPanel').classList.toggle('hidden',x!=='auth');$('emailSetupPanel').classList.toggle('hidden',x!=='emailSetup');$('agencyPanel').classList.toggle('hidden',x!=='agency');$('crmApp').classList.toggle('hidden',x!=='crm');$('logoutBtn').classList.toggle('hidden',!user);$('addBtn').classList.toggle('hidden',x!=='crm');$('agencySwitchBtn').classList.toggle('hidden',x!=='crm'||agencyCount<2)}
+async function agencies(){
+ if(!user?.id){screen('auth');return}
+ const {data:notificationSettings,error:notificationError}=await db.from('user_notification_settings').select('notification_email,preferred_channel,contact_consent').eq('user_id',user.id).maybeSingle();
+ if(notificationError){$('emailSetupMsg').textContent='Impossible de vérifier vos préférences e-mail : '+notificationError.message+'. Réessayez.';screen('emailSetup');return}
+ const emailReady=!!(notificationSettings?.contact_consent&&notificationSettings?.preferred_channel==='email'&&notificationSettings?.notification_email);
+ if(!emailReady){
+  $('setupNotificationEmail').value=notificationSettings?.notification_email||user.email||'';
+  $('emailSetupConsent').checked=false;
+  $('emailSetupMsg').textContent='';
+  screen('emailSetup');
+  return;
+ }
+ $('notificationEmail').value=notificationSettings.notification_email;
+ const {data,error}=await db.from('agency_members').select('agency_id,role,agencies(name,city)').eq('user_id',user.id);
+ if(error){$('agencyMsg').textContent=error.message;screen('agency');return}
+ const memberships=data||[];
+ agencyCount=memberships.length;
+ $('agencyChooser').classList.toggle('hidden',memberships.length===0);
+ $('agencySelect').innerHTML=memberships.map(x=>'<option value="'+x.agency_id+'" data-role="'+esc(x.role)+'" data-name="'+esc(x.agencies?.name||'Agence')+'" data-city="'+esc(x.agencies?.city||'')+'">'+esc(x.agencies?.name||'Agence')+' — '+esc(x.role)+'</option>').join('');
+ if(memberships.length===1){
+  agency=memberships[0].agency_id;agencyRole=memberships[0].role;
+  $('agencySubtitle').textContent=[memberships[0].agencies?.name,memberships[0].agencies?.city].filter(Boolean).join(' · ');
+  screen('crm');await load();return;
+ }
+ $('agencyMsg').textContent=memberships.length?'Choisissez votre agence.':'Créez votre première agence.';
+ screen('agency');
+}
 window.__visibienOpenApp=async sessionUser=>{user=sessionUser;activeUserId=sessionUser.id;await agencies()};
 async function load(){const {data,error}=await db.from('leads').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(error){alert(error.message);return}leads=(data||[]).map(x=>({id:x.id,createdBy:x.created_by,assignedTo:x.assigned_to||null,name:x.full_name,phone:x.phone,email:x.email,project:x.project,budget:x.budget_max??x.budget,budgetMin:x.budget_min??'',budgetMax:x.budget_max??x.budget??'',searchSector:x.search_sector||'',bedroomsMin:x.bedrooms_min??'',surfaceMin:x.surface_min??'',hasGarden:!!x.has_garden,hasTerrace:!!x.has_terrace,hasParking:!!x.has_parking,hasPool:!!x.has_pool,mustHave:x.must_have||'',property:x.property||'',status:x.status,date:x.follow_up_at?.slice(0,10)||'',notes:x.notes||'',photoPath:x.photo_path||'',photoUrl:null,visitAddress:x.visit_address||'',visitDate:x.visit_date||'',visitTime:x.visit_time?.slice(0,5)||'',created:new Date(x.created_at).getTime(),lastUpdated:new Date(x.updated_at||x.created_at).getTime()}));await Promise.all(leads.map(async x=>{if(x.photoPath){const {data}=await db.storage.from('lead-property-photos').createSignedUrl(x.photoPath,3600);x.photoUrl=data?.signedUrl||null}}));const {data:propertyData,error:propertyError}=await db.from('properties').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(propertyError){alert('Impossible de charger les biens : '+propertyError.message);return}properties=(propertyData||[]).map(x=>({id:x.id,title:x.title,type:x.property_type||'',sector:x.sector||'',address:x.address||'',price:x.price,bedrooms:x.bedrooms,surface:x.surface,garden:!!x.has_garden,terrace:!!x.has_terrace,parking:!!x.has_parking,pool:!!x.has_pool,notes:x.notes||'',createdBy:x.created_by,photoPaths:x.photo_paths||[],photoUrls:[],priceHistory:Array.isArray(x.price_history)?x.price_history:[],statusHistory:Array.isArray(x.status_history)?x.status_history:[],status:x.status,created:new Date(x.created_at).getTime()}));await Promise.all(properties.map(async x=>{if(x.photoPaths.length){const {data}=await db.storage.from('lead-property-photos').createSignedUrls(x.photoPaths,3600);x.photoUrls=(data||[]).map(y=>y.signedUrl).filter(Boolean)}}));agencyMembers=[];if(agencyRole==='owner'||agencyRole==='admin'){const memberResult=await db.functions.invoke('agency-director-members',{body:{agency_id:agency}});if(memberResult.error)console.warn('Membres agence indisponibles',memberResult.error.message);else agencyMembers=memberResult.data?.members||[]}render();renderAgenda();renderProperties();updateDashboardCharts();renderAgencyDirectorDashboard();const deepLinkLead=new URLSearchParams(window.location.search).get("lead");if(deepLinkLead)openLeadProfile(deepLinkLead)}
 function dateDisplay(x){if(!x.date)return '—';const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),label=new Date(x.date+'T00:00:00').toLocaleDateString('fr-FR');if(x.date<today)return '<span class="due">⚠ En retard · '+label+'</span>';if(x.date===today)return '<span class="today">● Aujourd’hui</span>';return label}
@@ -700,14 +722,33 @@ $('enableEmailReminders').onclick=async()=>{
  button.disabled=true;status.textContent='Enregistrement de vos préférences e-mail…';
  try{
   const {error}=await db.from('user_notification_settings').upsert({
-   user_id:user.id,notification_email:email,preferred_channel:'email',contact_consent:true,
+   user_id:user.id,notification_email:email,notification_phone:null,preferred_channel:'email',contact_consent:true,
    timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Paris',updated_at:new Date().toISOString()
   },{onConflict:'user_id'});
   if(error)throw error;
-  status.textContent='Rappels par e-mail activés pour '+email+'. Envoi automatique toutes les 15 minutes.';
+  status.textContent='Préférences e-mail enregistrées pour '+email+'. Le traitement automatique a lieu toutes les 15 minutes ; la livraison dépend de la configuration du service e-mail de l’agence.';
  }catch(error){console.error('Activation e-mail impossible',error);status.textContent='Activation impossible : '+(error.message||String(error))}
  finally{button.disabled=false}
 };
+
+$('saveEmailSetup').onclick=async()=>{
+ const email=$('setupNotificationEmail').value.trim(),button=$('saveEmailSetup'),msg=$('emailSetupMsg');
+ if(!email||!$('setupNotificationEmail').checkValidity()){msg.textContent='Saisissez une adresse e-mail valide.';return}
+ if(!$('emailSetupConsent').checked){msg.textContent='Veuillez confirmer votre accord pour recevoir les rappels par e-mail.';return}
+ button.disabled=true;msg.textContent='Enregistrement de vos préférences…';
+ try{
+  const {error}=await db.from('user_notification_settings').upsert({
+   user_id:user.id,notification_email:email,notification_phone:null,preferred_channel:'email',contact_consent:true,
+   timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Paris',updated_at:new Date().toISOString()
+  },{onConflict:'user_id'});
+  if(error)throw error;
+  $('notificationEmail').value=email;
+  msg.textContent='Adresse enregistrée. Ouverture de votre espace…';
+  await agencies();
+ }catch(error){msg.textContent='Enregistrement impossible : '+(error.message||String(error))}
+ finally{button.disabled=false}
+};
+
 async function logActivity(leadId,type,description){
  const {error}=await db.from('lead_activities').insert({agency_id:agency,lead_id:leadId,created_by:user.id,activity_type:type,description});
  if(error){console.warn('Historique non enregistré :',error.message);return false}
@@ -838,6 +879,185 @@ $('propertiesList').onclick=e=>{
   }
  }
 };
+
+$('photoFile').onchange=()=>{
+ const file=$('photoFile').files[0];if(!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){
+  alert('Choisis une image JPG, PNG ou WebP de 5 Mo maximum.');$('photoFile').value='';return;
+ }
+ const previousUrl=$('photoPreview').src;
+ if(previousUrl.startsWith('blob:'))URL.revokeObjectURL(previousUrl);
+ const url=URL.createObjectURL(file);
+ $('photoPreview').src=url;$('photoPreview').classList.remove('hidden');
+ $('photoHelp').textContent='Nouvelle photo prête à être enregistrée.';
+};
+
+$('leadForm').onsubmit=async e=>{
+ e.preventDefault();
+ const form=$('leadForm'),submit=form.querySelector('button[type="submit"]');
+ if(!user||!agency){alert('Connectez-vous et choisissez une agence avant d’enregistrer.');return}
+ const id=$('leadId').value,previous=leads.find(x=>x.id===id);
+ const name=$('name').value.trim(),emailValue=$('email').value.trim();
+ const minBudget=$('budgetMin').value?Number($('budgetMin').value):null;
+ const maxBudget=$('budgetMax').value?Number($('budgetMax').value):null;
+ const file=$('photoFile').files[0];
+ if(!name){alert('Saisissez le nom du prospect.');$('name').focus();return}
+ if(minBudget!==null&&maxBudget!==null&&minBudget>maxBudget){alert('Le budget minimum ne peut pas dépasser le budget maximum.');return}
+ if(($('visitDate').value&&!$('visitTime').value)||(!$('visitDate').value&&$('visitTime').value)){alert('Pour une visite, renseignez à la fois la date et l’heure.');return}
+ if(file&&(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)){alert('Choisissez une image JPG, PNG ou WebP de 5 Mo maximum.');return}
+ const normalizedPhone=v=>(v||'').replace(/\D/g,'');
+ const normalizedEmail=v=>(v||'').trim().toLowerCase();
+ if(!id){
+  const duplicate=leads.find(x=>(normalizedEmail(emailValue)&&normalizedEmail(x.email)===normalizedEmail(emailValue))||(normalizedPhone($('phone').value).length>=8&&normalizedPhone(x.phone)===normalizedPhone($('phone').value)));
+  if(duplicate&&!confirm('Un prospect avec le même téléphone ou e-mail existe déjà : '+duplicate.name+'. Ajouter quand même ce doublon ?'))return;
+ }
+ const followDate=$('date').value;
+ const p={
+  agency_id:agency,created_by:previous?.createdBy||user.id,assigned_to:previous?previous.assignedTo:user.id,
+  full_name:name,phone:$('phone').value.trim()||null,email:emailValue||null,project:$('project').value,
+  property:$('property').value||null,budget:maxBudget,budget_min:minBudget,budget_max:maxBudget,
+  search_sector:$('searchSector').value.trim()||null,
+  bedrooms_min:$('bedroomsMin').value?Number($('bedroomsMin').value):null,
+  surface_min:$('surfaceMin').value?Number($('surfaceMin').value):null,
+  has_garden:$('hasGarden').checked,has_terrace:$('hasTerrace').checked,has_parking:$('hasParking').checked,has_pool:$('hasPool').checked,
+  must_have:$('mustHave').value.trim()||null,status:$('status').value,
+  follow_up_at:followDate?followDate+'T09:00:00':null,
+  notes:$('notes').value.trim()||null,visit_address:$('visitAddress').value.trim()||null,
+  visit_date:$('visitDate').value||null,visit_time:$('visitTime').value||null,updated_at:new Date().toISOString()
+ };
+ const oldPhoto=previous?.photoPath||null;
+ let leadId=id;
+ if(submit)submit.disabled=true;
+ try{
+  if(id){
+   const {error}=await db.from('leads').update(p).eq('id',id).eq('agency_id',agency);
+   if(error)throw error;
+  }else{
+   const {data,error}=await db.from('leads').insert(p).select('id').single();
+   if(error)throw error;
+   leadId=data.id;
+  }
+  if(file){
+   const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+   const unique=window.crypto?.randomUUID?window.crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2);
+   const path=agency+'/'+leadId+'/'+unique+'.'+ext;
+   const {error:uploadError}=await db.storage.from('lead-property-photos').upload(path,file,{contentType:file.type,upsert:false});
+   if(uploadError){
+    alert('Le prospect est enregistré, mais la photo n’a pas pu être envoyée : '+uploadError.message);
+   }else{
+    const {error:photoError}=await db.from('leads').update({photo_path:path,updated_at:new Date().toISOString()}).eq('id',leadId).eq('agency_id',agency);
+    if(photoError){
+     await db.storage.from('lead-property-photos').remove([path]);
+     alert('La photo a été envoyée mais son association au prospect a échoué : '+photoError.message);
+    }else if(oldPhoto){
+     const {error:removeError}=await db.storage.from('lead-property-photos').remove([oldPhoto]);
+     if(removeError)console.warn('Ancienne photo non supprimée :',removeError.message);
+    }
+   }
+  }
+  if(!id){
+   await logActivity(leadId,'created','Prospect ajouté dans VisiBien.');
+  }else{
+   let logged=false;
+   if(previous&&previous.status!==p.status){await logActivity(leadId,'status','Statut : '+previous.status+' → '+p.status);logged=true}
+   if(previous&&(previous.date||'')!==(p.follow_up_at?.slice(0,10)||'')){
+    await logActivity(leadId,'follow_up','Prochaine relance modifiée'+(followDate?' au '+new Date(followDate+'T00:00:00').toLocaleDateString('fr-FR'):' : date supprimée'));logged=true;
+   }
+   if(previous&&((previous.visitDate||'')!==(p.visit_date||'')||(previous.visitTime||'')!==(p.visit_time||'')||(previous.visitAddress||'')!==(p.visit_address||''))){
+    await logActivity(leadId,'visit','Informations de visite mises à jour'+(p.visit_date?' · '+p.visit_date:'')+(p.visit_time?' à '+p.visit_time:'')+(p.visit_address?' · '+p.visit_address:''));logged=true;
+   }
+   if(!logged)await logActivity(leadId,'updated','Fiche prospect modifiée.');
+  }
+  $('modal').classList.remove('open');
+  await load();
+ }catch(error){alert('Impossible d’enregistrer le prospect : '+(error.message||String(error)))}
+ finally{if(submit)submit.disabled=false}
+};
+
+function runMatching(){
+ const v={property:$('matchProperty').value.trim().toLowerCase(),sector:$('matchSector').value.trim().toLowerCase(),price:Number($('matchPrice').value)||null,bedrooms:Number($('matchBedrooms').value)||null,surface:Number($('matchSurface').value)||null,garden:$('matchGarden').checked,terrace:$('matchTerrace').checked,parking:$('matchParking').checked,pool:$('matchPool').checked};
+ const candidates=leads.filter(x=>!['Gagné','Perdue'].includes(x.status)).map(x=>{
+  const checks=[],add=(label,ok,detail)=>checks.push({label,ok,detail});
+  if(x.property)add('Type de bien',!!v.property&&x.property.toLowerCase()===v.property,v.property?'Type demandé : '+$('matchProperty').selectedOptions[0].textContent:'Type du bien non renseigné');
+  if(x.searchSector){const terms=x.searchSector.toLowerCase().split(/[,;/]+/).map(s=>s.trim()).filter(Boolean);add('Secteur',!!v.sector&&terms.some(t=>v.sector.includes(t)||t.includes(v.sector)),v.sector?'Secteur demandé : '+$('matchSector').value:'Secteur du bien non renseigné')}
+  if(x.budgetMin||x.budgetMax){const ok=v.price!==null&&(!x.budgetMin||v.price>=Number(x.budgetMin))&&(!x.budgetMax||v.price<=Number(x.budgetMax));add('Budget',ok,v.price===null?'Prix du bien non renseigné':'Prix hors budget ('+[x.budgetMin?Number(x.budgetMin).toLocaleString('fr-FR')+' € min.':'',x.budgetMax?Number(x.budgetMax).toLocaleString('fr-FR')+' € max.':''].filter(Boolean).join(' · ')+')')}
+  if(x.bedroomsMin)add('Chambres',v.bedrooms!==null&&v.bedrooms>=Number(x.bedroomsMin),v.bedrooms===null?'Nombre de chambres non renseigné':'Minimum demandé : '+x.bedroomsMin);
+  if(x.surfaceMin)add('Surface',v.surface!==null&&v.surface>=Number(x.surfaceMin),v.surface===null?'Surface du bien non renseignée':'Minimum demandé : '+x.surfaceMin+' m²');
+  if(x.hasGarden)add('Jardin',v.garden,'Jardin souhaité');if(x.hasTerrace)add('Terrasse',v.terrace,'Terrasse souhaitée');if(x.hasParking)add('Parking',v.parking,'Parking souhaité');if(x.hasPool)add('Piscine',v.pool,'Piscine souhaitée');
+  const passed=checks.filter(c=>c.ok).length,score=checks.length?Math.round(passed/checks.length*100):null;
+  return {...x,score,checks,passed};
+ }).sort((a,b)=>(b.score??-1)-(a.score??-1)||b.created-a.created);
+ $('matchSummary').textContent=candidates.length+' prospect'+(candidates.length>1?'s':'')+' actif'+(candidates.length>1?'s':'')+' évalué'+(candidates.length>1?'s':'')+'. Le score compare les critères renseignés dans chaque fiche avec les caractéristiques du bien.';
+ $('matchResults').innerHTML=candidates.length?candidates.map(x=>{
+  const detail=x.checks.length?x.checks.filter(c=>!c.ok).map(c=>c.label+' : '+c.detail).join(' · '):'Aucun critère de recherche renseigné dans cette fiche.';
+  const positive=x.checks.filter(c=>c.ok).map(c=>c.label).join(' · ');
+  return '<article class="agenda-item"><div class="agenda-date">'+esc(x.name)+'<small>'+esc(x.status)+'</small><strong style="display:block;margin-top:6px;color:'+(x.score===100?'#28734b':x.score===null?'#8a6d3b':'#9a6532')+'">'+(x.score===null?'À qualifier':x.score+' %')+'</strong><small>'+(x.score===null?'':x.passed+'/'+x.checks.length+' critères respectés')+'</small></div><div class="agenda-details"><b>'+(x.phone?'<a href="tel:'+esc(x.phone.replace(/[^\d+]/g,''))+'" style="color:inherit;text-decoration:underline">Appeler · '+esc(x.phone)+'</a>':'Téléphone non renseigné')+'</b><small>'+(x.email?'<a href="mailto:'+esc(x.email)+'" style="color:inherit;text-decoration:underline">Envoyer un e-mail · '+esc(x.email)+'</a>':'E-mail non renseigné')+'</small><small>'+esc([x.property,x.searchSector,x.budgetMax?'Budget max. '+Number(x.budgetMax).toLocaleString('fr-FR')+' €':''].filter(Boolean).join(' · '))+'</small>'+(positive?'<small>Conformes : '+esc(positive)+'</small>':'')+'<small style="color:#9a6532">À vérifier : '+esc(detail)+'</small></div><button type="button" class="secondary agenda-edit" data-match-edit="'+x.id+'">Voir la fiche</button></article>';
+ }).join(''):'<div class="empty">Aucun prospect actif dans votre agence.</div>';
+}
+
+$('matchHomeBtn').onclick=()=>showMatching();
+$('matchBack').onclick=showDashboard;
+$('runMatch').onclick=runMatching;
+$('matchResults').onclick=e=>{
+ const button=e.target.closest('[data-match-edit]');if(!button)return;
+ const lead=leads.find(x=>x.id===button.dataset.matchEdit);if(lead)openLeadProfile(lead.id);
+};
+
+$('priorityPanel').onclick=e=>{
+ const button=e.target.closest('[data-priority]');if(!button)return;
+ const key=button.dataset.priority;
+ const labels={overdue:['Prospects en retard','Relances dont la date est dépassée'],today:['Relances aujourd’hui','Prospects à relancer aujourd’hui'],next7:['Relances sous 7 jours','Prochaines échéances de relance'],none:['Sans date de relance','Prospects actifs sans prochaine relance'],dormant:['Fiches à revoir','Prospects actifs sans mise à jour depuis au moins 14 jours']};
+ if(!labels[key])return;
+ $('directorPanel').classList.add('hidden');$('commercialOverview').classList.add('hidden');$('backupPanel').classList.add('hidden');
+ $('search').value='';$('filter').value='';$('followFilter').value=key;
+ $('filterPanel').classList.remove('hidden');$('dashboardStats').classList.add('hidden');$('analyticsDashboard').classList.add('hidden');
+ $('categoryPage').classList.remove('hidden');$('categoryTitle').textContent=labels[key][0];$('categoryDescription').textContent=labels[key][1];
+ render();window.scrollTo({top:0,behavior:'smooth'});
+};
+
+function csvCell(value){
+ let v=String(value??'');
+ if(/^\s*[=+@-]/.test(v))v="'"+v;
+ return '"'+v.replace(/"/g,'""')+'"';
+}
+function downloadCSV(filename,headers,rows){
+ const csv='\uFEFF'+[headers,...rows].map(row=>row.map(csvCell).join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportLeads(){
+ const rows=leads.map(x=>[x.name,x.phone,x.email,x.project,x.status,x.searchSector,x.budgetMin,x.budgetMax,x.date,x.visitDate,x.visitTime,x.visitAddress,x.bedroomsMin,x.surfaceMin,x.hasGarden?'Oui':'Non',x.hasTerrace?'Oui':'Non',x.hasParking?'Oui':'Non',x.hasPool?'Oui':'Non',x.mustHave,x.notes]);
+ downloadCSV('visibien-prospects.csv',['Nom','Téléphone','E-mail','Projet','Statut','Secteur','Budget min','Budget max','Prochaine relance','Date visite','Heure visite','Adresse visite','Chambres minimum','Surface minimum','Jardin','Terrasse','Parking','Piscine','Autres critères à vérifier manuellement','Notes'],rows);
+}
+function exportProperties(){
+ const rows=properties.map(x=>[x.title,x.type,x.sector,x.address,x.price,x.surface,x.bedrooms,x.status,x.garden?'Oui':'Non',x.terrace?'Oui':'Non',x.parking?'Oui':'Non',x.pool?'Oui':'Non',x.notes,(x.photoPaths||[]).join(' | ')]);
+ downloadCSV('visibien-biens.csv',['Bien','Type','Secteur','Adresse','Prix','Surface m²','Chambres','Statut','Jardin','Terrasse','Parking','Piscine','Notes','Chemins des photos'],rows);
+}
+$('exportLeadsBtn').onclick=exportLeads;
+$('exportPropertiesBtn').onclick=exportProperties;
+async function exportFullBackup(){
+ const button=$('exportBackupBtn');button.disabled=true;button.textContent='Préparation…';
+ try{
+  const {data,error}=await db.from('lead_activities').select('lead_id,activity_type,description,created_at').eq('agency_id',agency).order('created_at',{ascending:true});
+  if(error)throw error;
+  const backup={
+   format:'VisiBien backup',version:1,exported_at:new Date().toISOString(),agency_id:agency,
+   prospects:leads.map(x=>({...x,photoUrl:undefined})),
+   properties:properties.map(x=>({...x,photoUrls:undefined})),
+   activities:data||[],
+   notice:'Les fichiers photo eux-mêmes ne sont pas inclus ; seuls leurs chemins sont conservés. Les données exportées sont celles accessibles à votre compte.'
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='visibien-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ }catch(error){alert('Sauvegarde impossible : '+(error.message||String(error)))}
+ finally{button.disabled=false;button.textContent='Télécharger la sauvegarde JSON'}
+}
+$('exportBackupBtn').onclick=exportFullBackup;
+
 </script>
 </body>
 </html>
