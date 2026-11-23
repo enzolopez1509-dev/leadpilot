@@ -979,6 +979,8 @@ window.__visibienAuthAction=async(email,password)=>{
 };
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let user=null,agency=null,agencyRole=null,agencyCount=0,leads=[],properties=[],agencyMembers=[],activeUserId=null;
+// Expose the authenticated entry point immediately; agencies() is a hoisted declaration.
+
 db.auth.onAuthStateChange((event,session)=>{
   const nextUser=session?.user||null;
   const nextId=nextUser?.id||null;
