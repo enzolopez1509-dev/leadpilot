@@ -11,6 +11,9 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <title>VisiBien — Suivi prospects</title>
 <style>
 :root{--bg:#f4f6fa;--panel:#fff;--ink:#172033;--muted:#68738a;--line:#e6eaf1;--blue:#365cf5;--green:#138a62;--amber:#b7791f;--red:#c24141}
@@ -325,7 +328,6 @@ a:focus-visible{border-radius:4px}
 @media(max-width:700px){.director-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.director-kpis b{font-size:20px}}
 
 /* VisiBien Premium — couche de finition UI, sans changement métier */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 :root{
  --vb-navy:#172d3b;--vb-navy-2:#213d4c;--vb-champagne:#c6a978;--vb-champagne-soft:#f4eee3;
  --vb-ivory:#f7f6f2;--vb-white:#fff;--vb-ink:#1c2d38;--vb-muted:#73808a;
@@ -456,6 +458,95 @@ body[data-theme="dark"] .stat strong,body[data-theme="dark"] .lead-main b,body[d
 .lp-side-icon{display:inline-flex;align-items:center;justify-content:center}
 .lp-side-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:1099px){body:has(#crmApp:not(.hidden)) .lp-side-icon svg{width:19px;height:19px}}
+
+/* VisiBien Premium — harmonisation des écrans et états */
+#crmApp{min-width:0}
+#categoryPage,#agendaPage,#matchingPage,#propertiesPage{background:transparent;border:0;box-shadow:none;padding:0}
+#categoryPage>#leadsPanel{margin-top:18px}
+#agendaPage>div:first-child,#matchingPage>div:first-child,#propertiesPage>div:first-child{padding:5px 2px 17px}
+#agendaPage h2,#matchingPage h2,#propertiesPage h2,#categoryTitle{font:750 24px/1.25 Manrope,Inter,sans-serif!important;letter-spacing:-.04em;color:var(--vb-navy)!important}
+#agendaPage .note,#matchingPage .note,#propertiesPage .note{font-size:13px;line-height:1.55}
+#agendaEntry{justify-content:flex-start;gap:9px;margin:0 0 16px}
+#agendaEntry button{min-height:46px;padding:11px 15px}
+#commercialOverview{padding:17px 19px!important}
+#commercialOverview>div:first-child b,#backupPanel b,#notificationCenter b,#priorityPanel>b{font:700 14px Manrope,Inter,sans-serif;color:var(--vb-navy)}
+#commercialMetrics{gap:10px!important}
+#commercialMetrics>div{min-height:76px;display:flex;flex-direction:column;justify-content:center}
+#commercialMetrics small{font-size:11px}
+#commercialMetrics b{font-size:23px!important}
+#directorPanel{padding:18px!important}
+#backupPanel,#notificationCenter,#priorityPanel{padding:16px 18px!important}
+#backupPanel small{font-size:11px;line-height:1.5}
+#notificationItems .agenda-item{box-shadow:none;background:#faf9f6}
+#notificationCenter .notification-controls{padding-top:12px;border-top:1px solid var(--vb-line)}
+#notificationEmail{min-height:43px;border:1px solid var(--vb-line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--vb-ink)}
+#priorityPanel{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#priorityPanel .priority-action{border-radius:99px;background:#faf9f6;border-color:#ebe7de}
+#leadsPanel{padding:20px}
+#leadCards{margin-top:4px}
+.lead-card{position:relative;overflow:hidden}
+.lead-card:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 4px 4px 0;background:#d7c29e}
+.lead-main b{font-size:15px}
+.lead-contact a{color:#31596b;text-decoration:none}
+.lead-contact a:hover{text-decoration:underline}
+.lead-actions{align-items:center}
+.lead-actions button,.rowactions button{min-height:36px}
+.agenda-list{gap:12px}
+.agenda-item{border-radius:14px}
+.agenda-date{font:700 14px Manrope,Inter,sans-serif}
+.agenda-details b{font:700 14px Manrope,Inter,sans-serif}
+.property-stats>div{min-height:82px;display:flex;flex-direction:column;justify-content:center}
+.property-stats strong{font:750 25px Manrope,Inter,sans-serif}
+.property-toolbar{align-items:center}
+#propertyForm{padding:20px!important;border-radius:16px}
+#propertyFormTitle{font-size:18px!important}
+#propertyPhotoPreview img{max-width:112px;max-height:90px;object-fit:cover;border-radius:10px}
+#matchForm{padding:18px;border:1px solid var(--vb-line);border-radius:15px;background:#fff}
+#runMatch{min-height:48px;padding-inline:20px}
+#matchSummary{margin-top:12px;line-height:1.6}
+#matchResults .agenda-item{background:#fff}
+#modal .dialog,#historyModal .dialog{border-radius:20px}
+#leadForm .formgrid{gap:16px}
+.formgrid label{line-height:1.45}
+.formgrid label .note{font-weight:400}
+#authPanel,#emailSetupPanel,#agencyPanel{color:var(--vb-ink)}
+#authPanel .field,#emailSetupPanel .field,#agencyPanel .field{width:100%}
+#authPanel .actions button[aria-pressed="true"]{background:var(--vb-navy);color:#fff}
+#authPanel .actions button[aria-pressed="false"]{background:transparent;color:#56636a}
+#logoutBtn{position:fixed;right:18px;bottom:18px;z-index:20}
+@media(min-width:1100px){
+ #commercialOverview,#directorPanel,#backupPanel,#notificationCenter,#priorityPanel{margin-bottom:14px!important}
+ #agendaEntry{padding:3px 0}
+ #leadsPanel{padding:24px}
+ #matchForm{padding:22px}
+}
+@media(max-width:700px){
+ #categoryPage>#leadsPanel{margin-top:12px}
+ #agendaPage h2,#matchingPage h2,#propertiesPage h2,#categoryTitle{font-size:21px!important}
+ #agendaEntry{display:grid;grid-template-columns:1fr 1fr}
+ #agendaEntry button{width:100%;padding:10px 8px;font-size:12px}
+ #agendaEntry #matchHomeBtn{grid-column:1/-1}
+ #commercialOverview{padding:14px!important}
+ #commercialMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #commercialMetrics>div{min-height:68px}
+ #commercialMetrics b{font-size:21px!important}
+ #backupPanel{align-items:stretch!important}
+ #backupPanel>button{width:100%}
+ #notificationCenter .notification-controls{display:grid;grid-template-columns:1fr}
+ #notificationEmail{max-width:none!important;width:100%}
+ #priorityPanel{gap:6px}
+ #priorityPanel .priority-action{font-size:10px!important;padding:7px 9px!important}
+ #leadsPanel{padding:13px}
+ #matchForm{padding:14px}
+ #runMatch{width:100%}
+ #propertyForm{padding:14px!important}
+ #logoutBtn{right:10px;bottom:88px}
+}
+@media(hover:none){button:hover,.stat.clickable:hover,.lead-card:hover{transform:none}}
+body[data-theme="dark"] #agendaPage h2,body[data-theme="dark"] #matchingPage h2,body[data-theme="dark"] #propertiesPage h2,body[data-theme="dark"] #categoryTitle,body[data-theme="dark"] #commercialOverview b,body[data-theme="dark"] #backupPanel b,body[data-theme="dark"] #notificationCenter b{color:#f1e5d0!important}
+body[data-theme="dark"] #matchForm,body[data-theme="dark"] #matchResults .agenda-item,body[data-theme="dark"] #notificationItems .agenda-item,body[data-theme="dark"] #propertyForm{background:#192832;border-color:#2c3d46}
+body[data-theme="dark"] #notificationEmail{background:#14232c;border-color:#354751;color:#edf1f1}
+
 </style>
 </head>
 <body>
@@ -488,7 +579,7 @@ J’accepte de recevoir par e-mail les rappels et alertes professionnelles de Vi
 <p class="note">Les rappels sont traités automatiquement toutes les 15 minutes. Leur livraison nécessite la configuration du service e-mail de l’agence.</p>
 <button type="button" class="primary" id="saveEmailSetup" style="width:100%">Enregistrer mon adresse e-mail</button>
 <p class="note" id="emailSetupMsg" role="status" aria-live="polite"></p>
-</section><section class="panel hidden" id="agencyPanel"" style="max-width:520px;margin:30px auto"><h2>Votre agence</h2><label for="agencyName" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Nom de l’agence</label><input class="field" id="agencyName" autocomplete="organization" placeholder="Nom de l’agence"><label for="agencyCity" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Ville de l’agence</label><input class="field" id="agencyCity" autocomplete="address-level2" placeholder="Ex. Cannes, Lyon, Bordeaux" required><button class="primary" id="createAgency" style="margin-top:12px">Créer mon agence</button><div id="agencyChooser" class="hidden"><label for="agencySelect" style="display:block;font-size:13px;font-weight:650;margin:18px 0 6px">Choisir une agence</label><select class="field" id="agencySelect" aria-label="Choisir une agence"></select><button class="secondary" id="openAgency" style="margin-top:10px">Ouvrir l’agence</button></div><p class="note" id="agencyMsg"></p></section><button class="secondary hidden" id="logoutBtn">Déconnexion</button><div id="crmApp" class="hidden">
+</section><section class="panel hidden" id="agencyPanel" style="max-width:520px;margin:30px auto"><h2>Votre agence</h2><label for="agencyName" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Nom de l’agence</label><input class="field" id="agencyName" autocomplete="organization" placeholder="Nom de l’agence"><label for="agencyCity" style="display:block;font-size:13px;font-weight:650;margin:12px 0 6px">Ville de l’agence</label><input class="field" id="agencyCity" autocomplete="address-level2" placeholder="Ex. Cannes, Lyon, Bordeaux" required><button class="primary" id="createAgency" style="margin-top:12px">Créer mon agence</button><div id="agencyChooser" class="hidden"><label for="agencySelect" style="display:block;font-size:13px;font-weight:650;margin:18px 0 6px">Choisir une agence</label><select class="field" id="agencySelect" aria-label="Choisir une agence"></select><button class="secondary" id="openAgency" style="margin-top:10px">Ouvrir l’agence</button></div><p class="note" id="agencyMsg"></p></section><button class="secondary hidden" id="logoutBtn">Déconnexion</button><div id="crmApp" class="hidden">
 <section id="categoryPage" class="panel hidden" style="margin-bottom:18px"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="button" class="secondary" id="backDashboard">← Tableau de bord</button><div><h2 id="categoryTitle" style="margin:0">Prospects</h2><p id="categoryDescription" class="note" style="margin:3px 0 0">Liste filtrée</p></div></div><section class="panel" id="leadsPanel">
 <div class="toolbar"><input class="field search-field" id="search" type="search" aria-label="Rechercher un prospect" placeholder="Rechercher un prospect…"><button type="button" class="secondary" id="exportLeadsBtn">Exporter CSV</button><button type="button" class="secondary filter-toggle" id="filterToggle">☷ Filtres <span id="filterCount"></span></button></div><div class="filter-panel hidden" id="filterPanel"><select class="field" id="filter" aria-label="Filtrer par statut"><option value="">Tous les statuts</option><option>Nouveau</option><option>Contacté</option><option>Visite</option><option>Gagné</option><option>Perdue</option></select><select class="field" id="followFilter" aria-label="Filtrer les relances"><option value="">Toutes les relances</option><option value="due">À relancer</option><option value="overdue">En retard</option><option value="today">Aujourd’hui</option><option value="upcoming">À venir</option><option value="next7">Prochains 7 jours</option><option value="none">Sans date</option><option value="dormant">Fiches à revoir (14 j+)</option></select><select class="field" id="sort" aria-label="Trier les prospects"><option value="recent">Plus récents</option><option value="priority">Priorité commerciale</option><option value="follow">Date de relance</option><option value="name">Nom A → Z</option></select></div><div id="leadCards" class="lead-cards"></div><div class="empty hidden" id="empty">Aucun prospect pour le moment.<br>Ajoutez votre premier contact pour commencer.</div>
 <p class="note">Les prospects sont synchronisés dans la base sécurisée de votre agence.</p>
