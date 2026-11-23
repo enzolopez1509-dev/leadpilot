@@ -566,6 +566,20 @@ body[data-theme="dark"] .empty{color:#a3b0b6}
 #themeToggle{white-space:nowrap}
 @media(max-width:700px){#themeToggle{padding:9px 11px;font-size:12px}}
 
+
+/* Navigation mobile fonctionnelle + indicateurs intégrés aux rubriques */
+#dashboardStats{display:none!important}
+.lp-mobile-nav{display:none}
+@media(max-width:1099px){
+ .lp-mobile-nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:#172f3d;border-top:1px solid #ffffff20;box-shadow:0 -8px 28px #172d3b20}
+ .lp-mobile-nav button{display:flex;min-width:0;min-height:58px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 2px;border-radius:10px;background:transparent;color:#d7e0e3;font-size:10px;line-height:1.15;text-align:center;white-space:normal}
+ .lp-mobile-nav button[aria-current="page"]{background:#304957;color:#e2c18b;box-shadow:inset 0 -2px #c4a36b}
+ .lp-mobile-icon{font-size:19px;line-height:1.1}
+ .lp-mobile-nav small{display:block;max-width:100%;font-size:8px;line-height:1.15;color:#b7c5ca;white-space:normal}
+ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+}
+@media(min-width:1100px){.lp-mobile-nav{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -667,6 +681,15 @@ J’accepte de recevoir par e-mail les rappels et alertes professionnelles de Vi
   <div class="lp-side-agency"><small>Agence connectée</small><strong id="lpSideAgency">Votre espace professionnel</strong></div>
   <div class="lp-side-bottom"><button type="button" data-lp-nav="logout"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10M15 16l4-4-4-4M19 12H9"/></svg></span>Déconnexion</button></div>
 </aside>
+
+<nav class="lp-mobile-nav" aria-label="Navigation mobile">
+  <button type="button" data-lp-nav="dashboard" aria-current="page"><span class="lp-mobile-icon">▦</span><span>Tableau de bord</span></button>
+  <button type="button" data-lp-nav="leads"><span class="lp-mobile-icon">♙</span><span>Prospects</span><small id="mobileLeadCounts">0 · 0 à relancer · 0 retard · 0 gagnés</small></button>
+  <button type="button" data-lp-nav="properties"><span class="lp-mobile-icon">⌂</span><span>Biens immobiliers</span></button>
+  <button type="button" data-lp-nav="matching"><span class="lp-mobile-icon">⌕</span><span>Acheteurs compatibles</span></button>
+  <button type="button" data-lp-nav="agenda"><span class="lp-mobile-icon">▣</span><span>Agenda des visites</span><small id="mobileVisitCount">0 visite</small></button>
+</nav>
+
 
 
 <div class="modal" id="profileModal"><section class="dialog profile-dialog">
@@ -1335,6 +1358,34 @@ $('agendaList').addEventListener('click',e=>{
  const button=e.target.closest('[data-agenda-edit]');if(!button)return;
  const lead=leads.find(x=>x.id===button.dataset.agendaEdit);if(lead)openForm(lead);
 });
+
+
+// Navigation centralisée : barre mobile et menu latéral.
+function showLeads(){
+ $('directorPanel').classList.add('hidden');$('commercialOverview').classList.add('hidden');$('backupPanel').classList.add('hidden');
+ $('propertiesPage').classList.add('hidden');$('agendaPage').classList.add('hidden');$('matchingPage').classList.add('hidden');$('categoryPage').classList.add('hidden');
+ $('dashboardStats').classList.add('hidden');$('analyticsDashboard').classList.add('hidden');$('agendaEntry').classList.add('hidden');$('leadsPanel').classList.remove('hidden');
+ $('search').value='';$('filter').value='';$('followFilter').value='';render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function syncMobileNavCounts(){
+ const total=$('total')?.textContent||'0',follow=$('follow')?.textContent||'0',overdue=$('overdue')?.textContent||'0',won=$('won')?.textContent||'0',visits=$('visits')?.textContent||'0';
+ const leadNode=$('mobileLeadCounts'),visitNode=$('mobileVisitCount');
+ if(leadNode)leadNode.textContent=total+' · '+follow+' à relancer · '+overdue+' retard · '+won+' gagnés';
+ if(visitNode)visitNode.textContent=visits+' visite'+(visits==='1'?'':'s');
+}
+document.addEventListener('click',e=>{
+ const button=e.target.closest('[data-lp-nav]');if(!button)return;
+ const page=button.dataset.lpNav;
+ document.querySelectorAll('[data-lp-nav]').forEach(item=>{if(item.dataset.lpNav!=='logout')item.setAttribute('aria-current',item.dataset.lpNav===page?'page':'false');});
+ if(page==='dashboard')showDashboard();
+ else if(page==='leads')showLeads();
+ else if(page==='properties')showProperties();
+ else if(page==='matching')showMatching();
+ else if(page==='agenda')showAgenda();
+ else if(page==='logout')db.auth.signOut();
+});
+const statsObserver=new MutationObserver(syncMobileNavCounts);
+const statsNode=$('dashboardStats');if(statsNode)statsObserver.observe(statsNode,{subtree:true,childList:true,characterData:true});
 
 </script>
 
