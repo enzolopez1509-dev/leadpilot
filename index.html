@@ -678,6 +678,21 @@ body[data-theme="dark"] .empty{color:#a3b0b6}
  #leadCards .lead-actions button{flex:1 1 calc(50% - 6px);min-width:0}
 }
 
+
+/* Écran de connexion : masquer les commandes réservées à l'espace connecté */
+body:has(#authPanel:not(.hidden)) .top .actions,
+body:has(#emailSetupPanel:not(.hidden)) .top .actions,
+body:has(#agencyPanel:not(.hidden)) .top .actions,
+body:has(#authPanel:not(.hidden)) .lp-mobile-nav,
+body:has(#emailSetupPanel:not(.hidden)) .lp-mobile-nav,
+body:has(#agencyPanel:not(.hidden)) .lp-mobile-nav,
+body:has(#authPanel:not(.hidden)) .lp-sidebar,
+body:has(#emailSetupPanel:not(.hidden)) .lp-sidebar,
+body:has(#agencyPanel:not(.hidden)) .lp-sidebar{display:none!important}
+body:has(#authPanel:not(.hidden)),
+body:has(#emailSetupPanel:not(.hidden)),
+body:has(#agencyPanel:not(.hidden)){padding-bottom:env(safe-area-inset-bottom)!important}
+
 </style>
 </head>
 <body>
