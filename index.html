@@ -975,7 +975,8 @@ $('leadForm').onsubmit=async e=>{
 };
 
 function runMatching(){
- const v={property:$('matchProperty').value.trim().toLowerCase(),sector:$('matchSector').value.trim().toLowerCase(),price:Number($('matchPrice').value)||null,bedrooms:Number($('matchBedrooms').value)||null,surface:Number($('matchSurface').value)||null,garden:$('matchGarden').checked,terrace:$('matchTerrace').checked,parking:$('matchParking').checked,pool:$('matchPool').checked};
+ const readNumber=id=>{const raw=$(id).value;if(raw==='')return null;const n=Number(raw);return Number.isFinite(n)?n:null};
+ const v={property:$('matchProperty').value.trim().toLowerCase(),sector:$('matchSector').value.trim().toLowerCase(),price:readNumber('matchPrice'),bedrooms:readNumber('matchBedrooms'),surface:readNumber('matchSurface'),garden:$('matchGarden').checked,terrace:$('matchTerrace').checked,parking:$('matchParking').checked,pool:$('matchPool').checked};
  const candidates=leads.filter(x=>!['Gagné','Perdue'].includes(x.status)).map(x=>{
   const checks=[],add=(label,ok,detail)=>checks.push({label,ok,detail});
   if(x.property)add('Type de bien',!!v.property&&x.property.toLowerCase()===v.property,v.property?'Type demandé : '+$('matchProperty').selectedOptions[0].textContent:'Type du bien non renseigné');
@@ -1057,6 +1058,40 @@ async function exportFullBackup(){
  finally{button.disabled=false;button.textContent='Télécharger la sauvegarde JSON'}
 }
 $('exportBackupBtn').onclick=exportFullBackup;
+
+
+$('leadCards').addEventListener('click',async e=>{
+ const call=e.target.closest('[data-quick-call]');
+ if(call){e.preventDefault();await logActivity(call.dataset.quickCall,'call','Appel enregistré depuis la fiche prospect.');await openHistory(call.dataset.quickCall);return}
+ const noteButton=e.target.closest('[data-quick-note]');
+ if(noteButton){
+  e.preventDefault();const note=prompt('Note à ajouter à l’historique :');
+  if(note&&note.trim()){await logActivity(noteButton.dataset.quickNote,'note',note.trim());await openHistory(noteButton.dataset.quickNote)}
+  return;
+ }
+ const historyButton=e.target.closest('[data-history]');
+ if(historyButton){e.preventDefault();await openHistory(historyButton.dataset.history);return}
+ const editButton=e.target.closest('[data-edit]');
+ if(editButton){e.preventDefault();const lead=leads.find(x=>x.id===editButton.dataset.edit);if(lead)openForm(lead);return}
+ const deleteButton=e.target.closest('[data-del]');
+ if(deleteButton){
+  e.preventDefault();
+  if(!['owner','admin'].includes(agencyRole)){alert('Seuls les responsables de l’agence peuvent supprimer un prospect.');return}
+  const lead=leads.find(x=>x.id===deleteButton.dataset.del);
+  if(!lead||!confirm('Supprimer définitivement le prospect '+lead.name+' et son historique ?'))return;
+  const {error}=await db.from('leads').delete().eq('id',lead.id).eq('agency_id',agency);
+  if(error){alert('Suppression impossible : '+error.message);return}
+  if(lead.photoPath){
+   const {error:photoError}=await db.storage.from('lead-property-photos').remove([lead.photoPath]);
+   if(photoError)console.warn('Photo du prospect non supprimée du stockage :',photoError.message);
+  }
+  await load();
+ }
+});
+$('agendaList').addEventListener('click',e=>{
+ const button=e.target.closest('[data-agenda-edit]');if(!button)return;
+ const lead=leads.find(x=>x.id===button.dataset.agendaEdit);if(lead)openForm(lead);
+});
 
 </script>
 </body>
