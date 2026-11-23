@@ -851,6 +851,8 @@ window.addEventListener('load',()=>setTimeout(()=>{if(!window.__visibienModuleSt
   const button=document.getElementById('authSubmit');
   if(!button)return;
   button.addEventListener('click',async function(event){
+    // Une fois le module du CRM démarré, laisser son gestionnaire principal traiter le clic.
+    if(window.__visibienModuleStarted)return;
     event.preventDefault();
     event.stopImmediatePropagation();
     const msg=document.getElementById('authMsg');
@@ -917,12 +919,18 @@ window.__visibienAuthReady=window.__supabaseReady.then(lib=>{
           msg.textContent='Connexion effectuée, mais la session ne peut pas être récupérée. Réessaie une fois.';
           return;
         }
-        if(typeof window.__visibienOpenApp==='function'){
-          msg.textContent='Connexion réussie. Ouverture de votre espace…';
-          await window.__visibienOpenApp(sessionData.session.user);
-        }else{
-          msg.textContent='Connexion réussie, mais le CRM ne s’est pas initialisé. Recharge la page et réessaie.';
+        msg.textContent='Connexion réussie. Ouverture de votre espace…';
+        if(typeof window.__visibienOpenApp!=='function'){
+          await new Promise((resolve,reject)=>{
+            const ready=()=>{cleanup();resolve();};
+            const timeout=setTimeout(()=>{cleanup();reject(new Error('Le module du CRM ne démarre pas. Ferme l’onglet, rouvre visibien.fr dans Safari et réessaie.'))},20000);
+            const cleanup=()=>{clearTimeout(timeout);window.removeEventListener('visibien-app-ready',ready)};
+            window.addEventListener('visibien-app-ready',ready,{once:true});
+            if(typeof window.__visibienOpenApp==='function')ready();
+          });
         }
+        if(typeof window.__visibienOpenApp!=='function')throw new Error('Le module du CRM ne répond pas. Réessaie dans Safari.');
+        await window.__visibienOpenApp(sessionData.session.user);
       }
     }
   };
@@ -1030,6 +1038,7 @@ async function agencies(){
  screen('agency');
 }
 window.__visibienOpenApp=async sessionUser=>{user=sessionUser;activeUserId=sessionUser.id;await agencies()};
+window.dispatchEvent(new Event('visibien-app-ready'));
 async function load(){const {data,error}=await db.from('leads').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(error){alert(error.message);return}leads=(data||[]).map(x=>({id:x.id,createdBy:x.created_by,assignedTo:x.assigned_to||null,name:x.full_name,phone:x.phone,email:x.email,project:x.project,budget:x.budget_max??x.budget,budgetMin:x.budget_min??'',budgetMax:x.budget_max??x.budget??'',searchSector:x.search_sector||'',bedroomsMin:x.bedrooms_min??'',surfaceMin:x.surface_min??'',hasGarden:!!x.has_garden,hasTerrace:!!x.has_terrace,hasParking:!!x.has_parking,hasPool:!!x.has_pool,mustHave:x.must_have||'',property:x.property||'',status:x.status,date:x.follow_up_at?.slice(0,10)||'',notes:x.notes||'',photoPath:x.photo_path||'',photoUrl:null,visitAddress:x.visit_address||'',visitDate:x.visit_date||'',visitTime:x.visit_time?.slice(0,5)||'',created:new Date(x.created_at).getTime(),lastUpdated:new Date(x.updated_at||x.created_at).getTime()}));await Promise.all(leads.map(async x=>{if(x.photoPath){const {data}=await db.storage.from('lead-property-photos').createSignedUrl(x.photoPath,3600);x.photoUrl=data?.signedUrl||null}}));const {data:propertyData,error:propertyError}=await db.from('properties').select('*').eq('agency_id',agency).order('created_at',{ascending:false});if(propertyError){alert('Impossible de charger les biens : '+propertyError.message);return}properties=(propertyData||[]).map(x=>({id:x.id,title:x.title,type:x.property_type||'',sector:x.sector||'',address:x.address||'',price:x.price,bedrooms:x.bedrooms,surface:x.surface,garden:!!x.has_garden,terrace:!!x.has_terrace,parking:!!x.has_parking,pool:!!x.has_pool,notes:x.notes||'',createdBy:x.created_by,photoPaths:x.photo_paths||[],photoUrls:[],priceHistory:Array.isArray(x.price_history)?x.price_history:[],statusHistory:Array.isArray(x.status_history)?x.status_history:[],status:x.status,created:new Date(x.created_at).getTime()}));await Promise.all(properties.map(async x=>{if(x.photoPaths.length){const {data}=await db.storage.from('lead-property-photos').createSignedUrls(x.photoPaths,3600);x.photoUrls=(data||[]).map(y=>y.signedUrl).filter(Boolean)}}));agencyMembers=[];if(agencyRole==='owner'||agencyRole==='admin'){const memberResult=await db.functions.invoke('agency-director-members',{body:{agency_id:agency}});if(memberResult.error)console.warn('Membres agence indisponibles',memberResult.error.message);else agencyMembers=memberResult.data?.members||[]}render();renderAgenda();renderProperties();updateDashboardCharts();renderAgencyDirectorDashboard();const deepLinkLead=new URLSearchParams(window.location.search).get("lead");if(deepLinkLead)openLeadProfile(deepLinkLead)}
 function dateDisplay(x){if(!x.date)return '—';const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),label=new Date(x.date+'T00:00:00').toLocaleDateString('fr-FR');if(x.date<today)return '<span class="due">⚠ En retard · '+label+'</span>';if(x.date===today)return '<span class="today">● Aujourd’hui</span>';return label}
 function leadCompleteness(x){return [!!(x.phone||x.email),!!x.project,!!(x.budgetMin||x.budgetMax||x.budget),!!x.searchSector,!!x.property].filter(Boolean).length}
