@@ -547,11 +547,30 @@ body[data-theme="dark"] #agendaPage h2,body[data-theme="dark"] #matchingPage h2,
 body[data-theme="dark"] #matchForm,body[data-theme="dark"] #matchResults .agenda-item,body[data-theme="dark"] #notificationItems .agenda-item,body[data-theme="dark"] #propertyForm{background:#192832;border-color:#2c3d46}
 body[data-theme="dark"] #notificationEmail{background:#14232c;border-color:#354751;color:#edf1f1}
 
+
+/* Thème sombre activable */
+body[data-theme="dark"]{--bg:#101a21;--panel:#192832;--ink:#e8edf0;--muted:#a3b0b6;--line:#30414a;--vb-ivory:#101a21;--vb-white:#192832;--vb-ink:#e8edf0;--vb-muted:#a3b0b6;--vb-line:#30414a;background:#101a21;color:#e8edf0}
+body[data-theme="dark"] .wrap{color:#e8edf0}
+body[data-theme="dark"] .panel,body[data-theme="dark"] .stat,body[data-theme="dark"] .dialog{background:#192832;color:#e8edf0;border-color:#30414a}
+body[data-theme="dark"] .field,body[data-theme="dark"] input,body[data-theme="dark"] select,body[data-theme="dark"] textarea{background:#14232c;color:#e8edf0;border-color:#3a4c55}
+body[data-theme="dark"] .secondary{background:#2a3d47;color:#e7edf0}
+body[data-theme="dark"] .lead-card,body[data-theme="dark"] .agenda-item,body[data-theme="dark"] .profile-block,body[data-theme="dark"] .filter-panel{background:#1d303a;color:#e8edf0;border-color:#344852}
+body[data-theme="dark"] .lead-main b,body[data-theme="dark"] .agenda-details b,body[data-theme="dark"] td b{color:#f0e7d8}
+body[data-theme="dark"] td,body[data-theme="dark"] th{border-color:#30414a;color:#d5dfe3}
+body[data-theme="dark"] tbody tr:hover{background:#213640}
+body[data-theme="dark"] .pill{filter:brightness(.82)}
+body[data-theme="dark"] #authPanel .actions{background:#22343d!important}
+body[data-theme="dark"] #authPanel .actions button[aria-pressed="false"]{color:#dbe3e6}
+body[data-theme="dark"] #authPanel h2,body[data-theme="dark"] #agencyPanel h2,body[data-theme="dark"] #emailSetupPanel h2,body[data-theme="dark"] .dialog h2{color:#f0e7d8}
+body[data-theme="dark"] .empty{color:#a3b0b6}
+#themeToggle{white-space:nowrap}
+@media(max-width:700px){#themeToggle{padding:9px 11px;font-size:12px}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">VB</div><div><h1>VisiBien</h1><p id="agencySubtitle">Suivi prospects, biens et activité de votre agence</p></div></div><div class="actions"><button type="button" class="secondary hidden" id="agencySwitchBtn">Changer d’agence</button><button class="primary" id="addBtn">＋ Nouveau prospect</button></div></header>
+<header class="top"><div class="brand"><div class="logo">VB</div><div><h1>VisiBien</h1><p id="agencySubtitle">Suivi prospects, biens et activité de votre agence</p></div></div><div class="actions"><button type="button" class="secondary" id="themeToggle" aria-label="Activer le thème sombre" aria-pressed="false">◐ Thème sombre</button><button type="button" class="secondary hidden" id="agencySwitchBtn">Changer d’agence</button><button class="primary" id="addBtn">＋ Nouveau prospect</button></div></header>
 <section class="panel" id="authPanel" style="max-width:520px;margin:30px auto">
 <h2 style="margin-top:0">Bienvenue sur VisiBien</h2>
 <p style="color:var(--muted);margin-top:-6px">Connectez-vous ou créez votre espace professionnel.</p>
@@ -1318,5 +1337,29 @@ $('agendaList').addEventListener('click',e=>{
 });
 
 </script>
+
+<script>
+(function(){
+ const button=document.getElementById('themeToggle');
+ if(!button)return;
+ let saved=null;
+ try{saved=localStorage.getItem('visibien-theme')}catch(e){}
+ const apply=dark=>{
+  document.body.dataset.theme=dark?'dark':'light';
+  button.textContent=dark?'☀ Thème clair':'◐ Thème sombre';
+  button.setAttribute('aria-pressed',dark?'true':'false');
+  button.setAttribute('aria-label',dark?'Activer le thème clair':'Activer le thème sombre');
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=dark?'#101a21':'#172d3b';
+ };
+ apply(saved==='dark');
+ button.addEventListener('click',()=>{
+  const dark=document.body.dataset.theme!=='dark';
+  apply(dark);
+  try{localStorage.setItem('visibien-theme',dark?'dark':'light')}catch(e){}
+ });
+})();
+</script>
+
 </body>
 </html>
