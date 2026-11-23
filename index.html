@@ -451,6 +451,11 @@ body[data-theme="dark"] .stat strong,body[data-theme="dark"] .lead-main b,body[d
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* Icônes de navigation en tracé fin, sans pictogrammes décoratifs */
+.lp-side-icon{display:inline-flex;align-items:center;justify-content:center}
+.lp-side-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:1099px){body:has(#crmApp:not(.hidden)) .lp-side-icon svg{width:19px;height:19px}}
 </style>
 </head>
 <body>
@@ -542,15 +547,15 @@ J’accepte de recevoir par e-mail les rappels et alertes professionnelles de Vi
   <div class="lp-side-brand"><div class="lp-side-mark">VB</div><div><strong>VisiBien</strong><small>Espace agence</small></div></div>
   <div class="lp-side-label">Espace de travail</div>
   <nav class="lp-side-nav">
-    <button type="button" data-lp-nav="dashboard" aria-current="page"><span class="lp-side-icon">▦</span>Tableau de bord</button>
-    <button type="button" data-lp-nav="leads"><span class="lp-side-icon">♙</span>Prospects</button>
-    <button type="button" data-lp-nav="properties"><span class="lp-side-icon">⌂</span>Biens immobiliers</button>
-    <button type="button" data-lp-nav="matching"><span class="lp-side-icon">⌕</span>Acheteurs compatibles</button>
-    <button type="button" data-lp-nav="agenda"><span class="lp-side-icon">▣</span>Agenda des visites</button>
+    <button type="button" data-lp-nav="dashboard" aria-current="page"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span>Tableau de bord</button>
+    <button type="button" data-lp-nav="leads"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.4 3.1-5.2 7-5.2s6.4 1.8 7 5.2"/></svg></span>Prospects</button>
+    <button type="button" data-lp-nav="properties"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg></span>Biens immobiliers</button>
+    <button type="button" data-lp-nav="matching"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4.5 4.5M8 10.8h5.6M10.8 8v5.6"/></svg></span>Acheteurs compatibles</button>
+    <button type="button" data-lp-nav="agenda"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17M8 13h3M8 16.5h5"/></svg></span>Agenda des visites</button>
   </nav>
   <div class="lp-side-spacer"></div>
   <div class="lp-side-agency"><small>Agence connectée</small><strong id="lpSideAgency">Votre espace professionnel</strong></div>
-  <div class="lp-side-bottom"><button type="button" data-lp-nav="logout"><span class="lp-side-icon">↪</span>Déconnexion</button></div>
+  <div class="lp-side-bottom"><button type="button" data-lp-nav="logout"><span class="lp-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10M15 16l4-4-4-4M19 12H9"/></svg></span>Déconnexion</button></div>
 </aside>
 
 
