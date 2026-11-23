@@ -323,6 +323,134 @@ a:focus-visible{border-radius:4px}
 .director-agents th{font-size:10px;color:#78838b;text-transform:uppercase;letter-spacing:.05em}
 .director-risk{color:#a13f38;font-weight:750}
 @media(max-width:700px){.director-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.director-kpis b{font-size:20px}}
+
+/* VisiBien Premium — couche de finition UI, sans changement métier */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+:root{
+ --vb-navy:#172d3b;--vb-navy-2:#213d4c;--vb-champagne:#c6a978;--vb-champagne-soft:#f4eee3;
+ --vb-ivory:#f7f6f2;--vb-white:#fff;--vb-ink:#1c2d38;--vb-muted:#73808a;
+ --vb-line:#e8e6df;--vb-shadow:0 10px 30px rgba(23,45,59,.055);
+ --vb-radius:16px;--vb-radius-sm:11px;
+ --bg:var(--vb-ivory);--panel:var(--vb-white);--ink:var(--vb-ink);--muted:var(--vb-muted);--line:var(--vb-line);--blue:var(--vb-navy);--amber:#a77e43;
+}
+html{scroll-behavior:smooth}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--vb-ivory);color:var(--vb-ink);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.brand h1,.lp-side-brand strong{font-family:Manrope,Inter,sans-serif;letter-spacing:-.035em}
+button,input,select,textarea{font-family:inherit}
+button{min-height:42px;border-radius:11px;font-weight:650;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(198,169,120,.48);outline-offset:2px}
+button:hover{transform:translateY(-1px)}
+.primary{background:var(--vb-navy);color:#fff;box-shadow:0 5px 14px rgba(23,45,59,.13)}
+.primary:hover{background:var(--vb-navy-2);box-shadow:0 8px 18px rgba(23,45,59,.17)}
+.secondary{background:#f1f0eb;color:var(--vb-navy);border:1px solid #e8e5dc}
+.secondary:hover{background:var(--vb-champagne-soft);border-color:#dfcfb2}
+.danger{background:#fff1ef;color:#a83e36}
+.wrap{padding:30px 34px 48px}
+.top{background:var(--vb-navy);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:18px 22px;margin-bottom:22px;box-shadow:0 14px 34px rgba(23,45,59,.10)}
+.brand{gap:13px}.logo{background:var(--vb-champagne);color:var(--vb-navy);border-radius:13px;width:46px;height:46px;font-family:Manrope,sans-serif;font-weight:800}
+.brand h1{font-size:25px;font-weight:750;color:#fff}.brand p{color:#c8d1d4;font-size:12px}
+.panel,.stat,.analytics-card,.lead-card,.agenda-item,.property-stats>div{border:1px solid var(--vb-line);border-radius:var(--vb-radius);background:#fff;box-shadow:var(--vb-shadow)}
+.panel{padding:20px}
+.stat{padding:19px 20px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.stat:hover{transform:translateY(-2px);border-color:#d8c5a4;box-shadow:0 14px 30px rgba(23,45,59,.08)}
+.stat span{font-size:12px;font-weight:600;letter-spacing:.015em;color:var(--vb-muted)}
+.stat strong{font:750 30px/1.2 Manrope,Inter,sans-serif;color:var(--vb-navy);margin-top:10px}
+.stat small{font-size:11px;color:#89939a}
+.field{min-height:46px;border:1px solid #e4e4de;border-radius:11px;background:#fff;color:var(--vb-ink);padding:12px 13px;transition:border-color .18s,box-shadow .18s}
+.field:focus{border-color:var(--vb-champagne);box-shadow:0 0 0 3px rgba(198,169,120,.16);outline:0}
+label{color:#53616a}
+.note,.analytics-card p{color:var(--vb-muted)}
+.empty{border:1px dashed #d8d5cb;border-radius:14px;background:#fbfaf7;padding:28px 18px;color:#75818a;text-align:center;line-height:1.7}
+.analytics-grid{gap:16px}
+.analytics-card{padding:20px;background:#fff}
+.analytics-head h3{font:700 17px Manrope,Inter,sans-serif;color:var(--vb-navy)}
+.analytics-kicker{color:#9a7b4c;letter-spacing:.1em}
+.analytics-foot{border-color:#efede7;color:#7b858c}
+#commercialOverview,#notificationCenter,#priorityPanel,#backupPanel,#directorPanel{border-radius:var(--vb-radius)!important;box-shadow:var(--vb-shadow)}
+#commercialMetrics>div{padding:12px;border-radius:12px;background:#faf9f6;border:1px solid #eeece5}
+#commercialMetrics small{color:var(--vb-muted)}
+#commercialMetrics b{display:block;color:var(--vb-navy);font:750 21px Manrope,sans-serif;margin-top:5px}
+.toolbar,.property-toolbar{gap:10px}
+.filter-panel{padding:12px;border-radius:13px;background:#faf9f6;border:1px solid #eeece5}
+.lead-card{padding:18px;border-radius:14px;background:#fff}
+.lead-card:hover{border-color:#d4bd98;box-shadow:0 10px 24px rgba(23,45,59,.07)}
+.lead-main b{font:700 15px Manrope,sans-serif;color:var(--vb-navy)}
+.lead-actions button{border-radius:9px}
+.agenda-item{padding:16px 18px;background:#fff}
+.property-toolbar .field{min-width:0}
+#propertiesList .agenda-item img,#propertiesList img{border-radius:12px}
+#propertyForm{background:#fbfaf7;border-color:#e9e5dc}
+#propertyFormTitle{font-family:Manrope,sans-serif;color:var(--vb-navy)!important}
+.formgrid{gap:15px}
+.formgrid label{font-size:12px;font-weight:650;color:#58656d}
+.formfoot{gap:10px}
+.dialog{border:1px solid var(--vb-line);border-radius:20px;box-shadow:0 24px 80px rgba(15,30,39,.2)}
+/* Auth: écran de connexion volontairement calme et rassurant */
+#authPanel,#emailSetupPanel,#agencyPanel{max-width:480px!important;margin:7vh auto!important;padding:34px!important;border-radius:22px!important;border:1px solid #e9e5dc!important;box-shadow:0 24px 70px rgba(23,45,59,.09)!important;background:#fff}
+#authPanel:before{content:"VB";display:grid;place-items:center;width:54px;height:54px;margin:0 0 22px;border-radius:16px;background:var(--vb-navy);color:var(--vb-champagne);font:800 19px Manrope,sans-serif;letter-spacing:-.06em}
+#authPanel h2,#emailSetupPanel h2,#agencyPanel h2{font:750 25px/1.25 Manrope,sans-serif;color:var(--vb-navy);letter-spacing:-.04em}
+#authPanel>p:first-of-type{font-size:13px;line-height:1.7;color:#78838b}
+#authPanel .actions{background:#f5f4ef!important;border:1px solid #eeece5}
+#authPanel .actions button{min-height:43px}
+#authPanel label,#emailSetupPanel label,#agencyPanel label{color:#52616a;font-size:12px!important;font-weight:650!important}
+#authSubmit{min-height:48px;margin-top:14px!important}
+#authMsg{line-height:1.6}
+/* Navigation bureau */
+.lp-sidebar{background:var(--vb-navy);border-right:1px solid rgba(255,255,255,.07);box-shadow:8px 0 32px rgba(23,45,59,.08);padding:25px 16px}
+.lp-side-brand{padding-bottom:24px}
+.lp-side-mark{background:var(--vb-champagne);border-radius:13px}
+.lp-side-brand strong{font-size:21px;font-weight:750}
+.lp-side-label{font-size:10px;letter-spacing:.13em}
+.lp-side-nav{gap:6px}
+.lp-side-nav button,.lp-side-bottom button{min-height:44px;border-radius:11px;color:#d6dfe1;font-size:13px}
+.lp-side-nav button[aria-current="page"]{background:rgba(198,169,120,.17);color:#f1d8ad;box-shadow:inset 3px 0 #c6a978}
+.lp-side-nav button:hover,.lp-side-bottom button:hover{background:rgba(255,255,255,.08)}
+.lp-side-icon{font-size:17px;opacity:.9}
+.lp-side-agency{border-radius:12px;border-color:rgba(255,255,255,.13)}
+/* Préférence sombre, activable en ajoutant data-theme="dark" sur body */
+body[data-theme="dark"]{--vb-ivory:#111b22;--vb-white:#192832;--vb-ink:#edf1f1;--vb-muted:#a4b0b5;--vb-line:#2c3d46;background:#111b22;color:#edf1f1}
+body[data-theme="dark"] .panel,body[data-theme="dark"] .stat,body[data-theme="dark"] .analytics-card,body[data-theme="dark"] .lead-card,body[data-theme="dark"] .agenda-item{background:#192832;border-color:#2c3d46;color:#edf1f1}
+body[data-theme="dark"] .field{background:#14232c;border-color:#354751;color:#edf1f1}
+body[data-theme="dark"] .empty,body[data-theme="dark"] #commercialMetrics>div{background:#14232c;border-color:#354751}
+body[data-theme="dark"] .stat strong,body[data-theme="dark"] .lead-main b,body[data-theme="dark"] .analytics-head h3{color:#f1e5d0}
+/* Navigation mobile en barre basse, cinq destinations accessibles au pouce */
+@media(max-width:1099px){
+ body:has(#crmApp:not(.hidden)){padding-bottom:82px}
+ body:has(#crmApp:not(.hidden)) .wrap{padding:14px 14px 28px;width:auto;max-width:none}
+ body:has(#crmApp:not(.hidden)) .lp-sidebar{display:flex!important;position:fixed;inset:auto 0 0;width:100%;height:72px;padding:6px 5px calc(6px + env(safe-area-inset-bottom));background:rgba(23,45,59,.97);backdrop-filter:blur(18px);box-shadow:0 -8px 28px rgba(23,45,59,.14);border:0;z-index:50;flex-direction:row;align-items:center}
+ body:has(#crmApp:not(.hidden)) .lp-side-brand,body:has(#crmApp:not(.hidden)) .lp-side-label,body:has(#crmApp:not(.hidden)) .lp-side-spacer,body:has(#crmApp:not(.hidden)) .lp-side-agency,body:has(#crmApp:not(.hidden)) .lp-side-bottom{display:none!important}
+ body:has(#crmApp:not(.hidden)) .lp-side-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%;gap:2px}
+ body:has(#crmApp:not(.hidden)) .lp-side-nav button{min-width:0;min-height:58px;padding:5px 2px;gap:3px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:9px;line-height:1.15;border-radius:10px;white-space:normal}
+ body:has(#crmApp:not(.hidden)) .lp-side-icon{width:auto;font-size:18px;line-height:1.2}
+ body:has(#crmApp:not(.hidden)) .lp-side-nav button[aria-current="page"]{background:rgba(198,169,120,.18);color:#f0d8af;box-shadow:inset 0 -2px #c6a978}
+ .top{padding:14px 15px;border-radius:16px;gap:12px}
+ .brand h1{font-size:21px}
+ .top .actions{width:100%}
+ .top .actions button{flex:1}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .stat{padding:14px}
+ .stat strong{font-size:24px}
+ .panel{padding:14px}
+ .analytics-grid{grid-template-columns:1fr}
+ #authPanel,#emailSetupPanel,#agencyPanel{margin:5vh auto!important;padding:26px!important}
+}
+@media(max-width:520px){
+ .top{align-items:stretch}
+ .top .brand{align-items:center}
+ .top .actions{flex-wrap:wrap}
+ .top .actions button{min-width:0;font-size:12px;padding:10px 9px}
+ .stats{gap:8px}
+ .stat strong{font-size:22px}
+ .toolbar{flex-wrap:wrap}
+ .toolbar .search-field{flex-basis:100%}
+ .property-toolbar{display:grid;grid-template-columns:1fr 1fr}
+ .property-toolbar input{grid-column:1/-1}
+ .formgrid{grid-template-columns:1fr}
+ .formgrid .full{grid-column:auto}
+ #authPanel,#emailSetupPanel,#agencyPanel{margin:3vh auto!important;padding:22px!important}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
